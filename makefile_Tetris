@@ -1,0 +1,37 @@
+CC = g++ -Wall -Wextra -Werror -std=c++11
+CC_S = g++ -shared -Wall -Wextra -Werror -std=c++11
+LINK_FLAGS = -Wl,--out-implib,engine.dll -L"C:\Program Files\Microsoft SDKs\Windows\v6.0A\Lib" \
+				-lWinMM -L"C:\glfw-3.0.4.bin.WIN32\lib-mingw" -lglfw3  \
+				-L"C:\glew-1.11.0\lib\Release\Win32" -lglew32s -L"C:\glew-1.5.4-mingw32\lib" -llibglew32 -lgdi32 -lglu32 -lopengl32
+ENG_LINK = -L"C:\Users\jgelderl\Documents\Engine" -lengine
+INC_DIRS = -isystem"C:\glfw-3.0.4.bin.WIN32\include" -isystem"C:\glew-1.5.4-mingw32\include" \
+ 				-I"C:\Users\jgelderl\Documents\Engine\lib" -I"C:\Users\jgelderl\Documents\Engine\src"
+CFLAGS = -c $(INC_DIRS)
+
+all: engine.dll Tetris.exe
+
+engine.dll: engine.o game.o
+		$(CC_S) -o engine.dll $(INC_DIRS) engine.o game.o $(LINK_FLAGS)
+
+Tetris.exe: Tetris.o Block.o Board.o
+		$(CC) -o Tetris.exe $(INC_DIRS) Tetris.o Block.o Board.o $(LINK_FLAGS) $(ENG_LINK)
+		
+Tetris.o: examples/Tetris/Tetris.cpp
+		$(CC) $(CFLAGS) examples/Tetris/Tetris.cpp
+		
+engine.o: src/engine.cpp src/engine.h
+		$(CC) $(CFLAGS) src/engine.cpp
+        
+game.o: src/game.cpp src/game.h
+		$(CC) $(CFLAGS) src/game.cpp
+		
+Block.o: examples/Tetris/Block.cpp examples/Tetris/Block.h
+		$(CC) $(CFLAGS) examples/Tetris/Block.cpp
+        
+Board.o: examples/Tetris/Board.cpp examples/Tetris/Board.h
+		$(CC) $(CFLAGS) examples/Tetris/Board.cpp
+		
+clean:
+		-del engine.dll Tetris.exe *.o
+		
+rebuild: clean all
