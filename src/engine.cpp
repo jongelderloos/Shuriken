@@ -37,7 +37,13 @@ bool Engine::createWindow(HINSTANCE instance, char* name)
   WNDCLASSA windowClass = {0};
   HDC deviceContext;
 
-  resizeDIBSection(1024, 768, this);
+  RECT desiredWindowSize = {0, 0, 375, 550};
+  AdjustWindowRect(&desiredWindowSize, WS_OVERLAPPEDWINDOW|WS_VISIBLE, false);
+
+  int desiredWidth = desiredWindowSize.right - desiredWindowSize.left;
+  int desiredHeight = desiredWindowSize.bottom - desiredWindowSize.top;
+
+  resizeDIBSection(desiredWidth, desiredHeight, this);
 
   // Make it so the entire window is resized on these events
   windowClass.style = CS_HREDRAW|CS_VREDRAW;
@@ -49,7 +55,7 @@ bool Engine::createWindow(HINSTANCE instance, char* name)
   if(RegisterClassA(&windowClass))
   {
     window = CreateWindowExA(0, windowClass.lpszClassName, windowClass.lpszClassName, WS_OVERLAPPEDWINDOW|WS_VISIBLE,
-            CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, instance, this);
+            CW_USEDEFAULT, CW_USEDEFAULT, desiredWidth, desiredHeight, 0, 0, instance, this);
 
     if(window)
     {

@@ -5,7 +5,7 @@
 #include <vector>
 
 #define MAX_WIDTH  8
-#define MAX_HEIGHT 24
+#define MAX_HEIGHT 20
 
 extern struct Falling
 {
@@ -61,7 +61,7 @@ public:
   void evalBoard(void);
   void processBoard(void);
   void drawBoard(void);
-  void renderBlock(int, int, uint32_t);
+  void renderBlock(int, int, BLOCK_TYPE);
   ROW_STATE getRowState(std::vector<Block*>);
   int getRowsMade(void);
   void addBlock(void);

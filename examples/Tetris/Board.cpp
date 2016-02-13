@@ -4,13 +4,13 @@
 
 
 const int blocks_loc[][8] = {{ 0, 0,  0, 0,  0, 0,  0, 0  },   // BLOCK_NONE
-                             { 3, 23, 3, 22, 3, 21, 3, 20 },   // BLOCK_STRAIGHT
-                             { 3, 22, 4, 22, 3, 21, 4, 21 },   // BLOCK_SQUARE
-                             { 3, 22, 2, 21, 3, 21, 2, 20 },   // BLOCK_Z
-                             { 2, 22, 2, 21, 3, 21, 3, 20 },   // BLOCK_Z_R
-                             { 2, 22, 3, 22, 3, 21, 3, 20 },   // BLOCK_L
-                             { 3, 22, 3, 21, 2, 20, 3, 20 },   // BLOCK_L_R
-                             { 3, 22, 2, 21, 3, 21, 3, 20 }};  // BLOCK_T
+                             { 3, 19, 3, 18, 3, 17, 3, 16 },   // BLOCK_STRAIGHT
+                             { 3, 18, 4, 18, 3, 17, 4, 17 },   // BLOCK_SQUARE
+                             { 4, 18, 3, 17, 4, 17, 3, 16 },   // BLOCK_Z
+                             { 3, 18, 3, 17, 4, 17, 4, 16 },   // BLOCK_Z_R
+                             { 3, 18, 4, 18, 4, 17, 4, 16 },   // BLOCK_L
+                             { 4, 18, 4, 17, 3, 16, 4, 16 },   // BLOCK_L_R
+                             { 4, 18, 3, 17, 4, 17, 4, 16 }};  // BLOCK_T
 
 // Rotate arrays for straight block
 const int straight_first_values[] = { 2, -1, -1, -2, -2, 1, 1, 2 };
@@ -966,8 +966,9 @@ void Board::draw(void)
       uint32_t* pixel = (uint32_t*)row;
       for(int x = 0; x < windowWidth; x++)
       {
-        if((((x >= 0) && (x <= 25)) || ((x >= 225) && (x <= 250))) ||
-          (((y >= 0) && (y <= 25)) || ((y >= 625) && (y <= 650))))
+        if((((x >= 0) && (x < 25)) || ((x >= 225) && (x < 250)) || ((x >= 350) && (x < 375))) ||
+          (((y >= 0) && (y < 25)) || ((y >= 525) && (y < 550))) ||
+          (((x >= 250) && (x < 350)) && ((y >= 400) && (y < 425))))
         {
           //memPtr[x+y] = 0xA4A4A4A4;
           *pixel++ = 0xA4A4A4A4;
@@ -1027,59 +1028,95 @@ void Board::draw(void)
 
 void Board::drawBoard(void)
 {
-
+  // Draw the blocks in play
   for(int i = height-1; i >= 0; i--)
   {
     for(int j = 0; j < width; j++)
     { 
-      uint32_t value = 0x0;
+      BLOCK_TYPE type;
       if(this->getRowState(i) == STATE_FLASH)
       {  
-        value = 0xFFFFFF;
+        // TODO: need a type for flashing state
+        type = BLOCK_NONE;
       }
       else if(this->getRowState(i) == STATE_DELETE)
       {
-        value = 0x0;
+        type = BLOCK_NONE;
       }
       else
       {
-        uint8_t* row = (uint8_t*)videoMemPtr;
-        switch(board[i][j]->getBlockType())
-        {
-        case BLOCK_STRAIGHT:
-          value = 0x2EFEF7;
-        case BLOCK_SQUARE:
-          value = 0xFFFF00;
-        case BLOCK_Z:
-          value = 0xFF0000;
-        case BLOCK_Z_R:
-          value = 0x00FF00;
-        case BLOCK_L:
-          value = 0xFF8000;
-        case BLOCK_L_R:
-          value = 0x0000FF;
-        case BLOCK_T:
-          value = 0x8000FF;
-        default:
-          break;
-        }
+        type = board[i][j]->getBlockType();
       }
-      renderBlock(j, i, value);
+      // add one to each to account for the boarder
+      renderBlock(j+1, i+1, type);
     }
+  }
+
+  // Clear the block on deck area
+  for(int i = 17; i < 21; i++)
+  {
+    for(int j = 10; j < 14; j++)
+    {
+      renderBlock(j, i, BLOCK_NONE);
+    }
+  }
+
+  // Draw the block on deck
+  BLOCK_TYPE type = blockOnDeck.getBlockType();
+  int locations[8];
+  for(int i = 0; i < 8; i++)
+  {
+    // if its an x coord add 5 to shift it to the block on deck area,
+    // if its a y coord add 1 to offset the bottom border
+    locations[i] = i%2 ? blocks_loc[type][i] + 1 : blocks_loc[type][i] + 8;
+  }
+
+  for(int i = 0; i < 8; i+=2)
+  {
+    renderBlock(locations[i], locations[i+1], type);
   }
 }
 
-void Board::renderBlock(int xCoord, int yCoord, uint32_t colorVal)
+void Board::renderBlock(int xCoord, int yCoord, BLOCK_TYPE type)
 {
+  uint32_t value = 0x0;
+
+  switch(type)
+  {
+  case BLOCK_STRAIGHT:
+    value = 0x2EFEF7;
+    break;
+  case BLOCK_SQUARE:
+    value = 0xFFFF00;
+    break;
+  case BLOCK_Z:
+    value = 0xFF0000;
+    break;
+  case BLOCK_Z_R:
+    value = 0x00FF00;
+    break;
+  case BLOCK_L:
+    value = 0xFF8000;
+    break;
+  case BLOCK_L_R:
+    value = 0x0000FF;
+    break;
+  case BLOCK_T:
+    value = 0x8000FF;
+    break;
+  default:
+    break;
+  }
+
   uint8_t* row = (uint8_t*)videoMemPtr;
-  row += ((yCoord+1)*windowWidth*25*4);
+  row += ((yCoord)*windowWidth*25*4);
   for(int y = 0; y < 25; y++)
   {
     uint32_t* pixel = (uint32_t*)row;
-    pixel += (xCoord+1)*25;
+    pixel += (xCoord)*25;
     for(int x = 0; x < 25; x++)
     {
-      *pixel++ = colorVal;
+      *pixel++ = value;
     }
     row += windowWidth * 4;
  }
