@@ -1,6 +1,7 @@
 #include "PhysSpace2D.h"
-#include "easylogging++.h"
+#include <iostream>
 
+using namespace std;
 
 PhysSpace2D::PhysSpace2D()
 {
@@ -39,7 +40,7 @@ void PhysSpace2D::addObject(PhysObj2D* obj)
   }
   catch(const std::bad_alloc& e)
   {
-    LOG(ERROR) << "Bad alloc error: " << e.what();
+    cout << "Bad alloc error: " << e.what();
   }
 }
 
@@ -56,7 +57,7 @@ void PhysSpace2D::removeObject(PhysObj2D* obj)
       }
       catch(const std::out_of_range& e)
       {
-        LOG(ERROR) << "Out of range error: " << e.what();
+        cout << "Out of range error: " << e.what();
       }
       break;
     }
@@ -73,8 +74,8 @@ void PhysSpace2D::tick()
     {
       obj->nextPos.x = obj->pos.x + (obj->vel.x / TICKS_PER_SECOND);
       obj->nextPos.y = obj->pos.y + (obj->vel.y / TICKS_PER_SECOND);
-      LOG(INFO) << "Object: " << obj->name << " next pos: (" << obj->pos.x << "," << obj->pos.y << ")";
-      LOG(INFO) << "Velocity: (" << obj->vel.x << "," << obj->vel.y << ")";
+      cout << "Object: " << obj->name << " next pos: (" << obj->pos.x << "," << obj->pos.y << ")";
+      cout << "Velocity: (" << obj->vel.x << "," << obj->vel.y << ")";
     }
 
     if(obj->feelsGravity)

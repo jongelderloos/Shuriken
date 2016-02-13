@@ -1,7 +1,6 @@
 #include "Tetris.h"
 #include "stdio.h"
 #include "Windows.h"
-#include "easylogging++.h"
 
 Tetris::Tetris()
 {
@@ -15,8 +14,10 @@ Tetris::~Tetris()
 void Tetris::start(void)
 {
   Game::start();
-  
-  appState = APP_MENU;
+ 
+  // TODO: set back to menu once we have graphics
+  //appState = APP_MENU;
+  appState = APP_RUNNING;
   msProcessTime = 250;
 }
 
@@ -65,8 +66,10 @@ void Tetris::update(void)
     
     if(gameBoard.isRunning() == false)
     {
-      LOG(INFO) << "Game stoped runnung";
-      appState = APP_MENU;
+      OutputDebugStringA("Game stoped runnung");
+      // TODO: set back to menu once we have graphics
+      //appState = APP_MENU;
+      appState = APP_RUNNING;
     }
   }
 }
@@ -79,6 +82,11 @@ int Tetris::getDesiredFPS(void)
 unsigned int* Tetris::getMsProcessTime(void)
 {
   return gameBoard.getMsProcessTime();
+}
+
+void Tetris::setVideoMemory(void* memoryPtr, int width, int height)
+{
+  gameBoard.setVideoMemory(memoryPtr, width, height);
 }
 
 void Tetris::draw(void)

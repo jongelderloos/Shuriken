@@ -1,11 +1,9 @@
-CC = g++ -Wall -Wextra -Werror -std=c++11
-CC_S = g++ -shared -Wall -Wextra -Werror -std=c++11
-LINK_FLAGS = -Wl,--out-implib,engine.dll -L"C:\Program Files\Microsoft SDKs\Windows\v6.0A\Lib" \
-				-lWinMM -L"C:\glfw-3.0.4.bin.WIN32\lib-mingw" -lglfw3  \
-				-L"C:\glew-1.11.0\lib\Release\Win32" -lglew32s -L"C:\glew-1.5.4-mingw32\lib" -llibglew32 -lgdi32 -lglu32 -lopengl32
-ENG_LINK = -L"C:\Users\jgelderl\Documents\Engine" -lengine
-INC_DIRS = -isystem"C:\glfw-3.0.4.bin.WIN32\include" -isystem"C:\glew-1.5.4-mingw32\include" \
- 				-I"C:\Users\jgelderl\Documents\Engine\lib" -I"C:\Users\jgelderl\Documents\Engine\src"
+CC = clang++ -Wall -Wextra -std=c++11
+CC_S = clang++ -shared -Wall -Wextra -Werror -std=c++11
+LINK_FLAGS = -Wl,--out-implib,engine.dll -L"C:\Program Files\Microsoft SDKs\Windows\v6.0A\Lib"
+ENG_LINK = -L"D:\Jon Stuff\Git\Shuriken" -lengine
+INC_DIRS = -I"D:\Jon Stuff\Git\Shuriken\lib" -I"D:\Jon Stuff\Git\Shuriken\src" \
+	-isystem"C:\cygwin64\usr\i686-w64-mingw32\sys-root\mingw\include"
 CFLAGS = -c $(INC_DIRS)
 
 all: engine.dll Tetris.exe Pong.exe
@@ -17,8 +15,8 @@ Pong: engine.dll Pong.exe
 engine.dll: engine.o game.o PhysSpace2D.o PhysObj2D.o Shape2D.o HitBox2D.o CollisionData2D.o Vec2D.o Point2D.o Box.o Circle.o 
 		$(CC_S) -o engine.dll $(INC_DIRS) engine.o game.o PhysSpace2D.o PhysObj2D.o Shape2D.o HitBox2D.o CollisionData2D.o Vec2D.o Point2D.o Box.o Circle.o $(LINK_FLAGS)
 
-engine.o: src/engine.cpp src/engine.h
-		$(CC) $(CFLAGS) src/engine.cpp src/engine.h
+engine.o: src/engine.cpp
+		$(CC) $(CFLAGS) src/engine.cpp
         
 game.o: src/game.cpp src/game.h
 		$(CC) $(CFLAGS) src/game.cpp src/game.h

@@ -22,6 +22,7 @@ public:
   void start(void) override;
   void handleInput(char) override;
   void update(void) override;
+  void setVideoMemory(void*, int, int) override;
   void draw(void) override;
   int getDesiredFPS(void) override;
   unsigned int* getMsProcessTime(void) override;

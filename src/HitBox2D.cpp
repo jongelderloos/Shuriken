@@ -1,6 +1,8 @@
 #include "HitBox2D.h"
 #include "Box.h"
-#include "easylogging++.h"
+#include <iostream>
+
+using namespace std;
 
 HitBox2D::HitBox2D()
 {
@@ -38,7 +40,7 @@ bool HitBox2D::checkCollision(HitBox2D& other)
     }
     catch(std::bad_cast& e)
     {
-      LOG(ERROR) << "Bad cast error: " << e.what();
+      cout << "Bad cast error: " << e.what();
     }
 
     collided = thisHitBox->checkCollision(*otherHitBox);

@@ -22,7 +22,7 @@ Table::Table()
   HitBox2D ballHb(ballShape);
   // Create a setup function
   gameBall.init("Game Ball", ballPos, ballVel, ballHb, 10, true, true, false, 0);
-  LOG(INFO) << "Ball: " << gameBall.name;
+  cout << "Ball: " << gameBall.name;
 
   Point2D pos1(10, 200);
   Vec2D vel1(0, 0);
@@ -78,9 +78,9 @@ void Table::update(void)
   {
     //gameTable.tick();
   }
-  LOG(INFO) << gameBall.name << ": pos(" << gameBall.pos.x << "," << gameBall.pos.y << ")";
-  LOG(INFO) << p1Paddle.name << ": pos(" << p1Paddle.pos.x << "," << p1Paddle.pos.y << ")";
-  LOG(INFO) << p2Paddle.name << ": pos(" << p2Paddle.pos.x << "," << p2Paddle.pos.y << ")";
+  cout << gameBall.name << ": pos(" << gameBall.pos.x << "," << gameBall.pos.y << ")";
+  cout << p1Paddle.name << ": pos(" << p1Paddle.pos.x << "," << p1Paddle.pos.y << ")";
+  cout << p2Paddle.name << ": pos(" << p2Paddle.pos.x << "," << p2Paddle.pos.y << ")";
 }
 
 int Table::getDesiredFPS(void)
@@ -99,10 +99,10 @@ void Table::draw(void)
 
 void Table::moveP1Paddle(float yDist)
 {
-  LOG(INFO) << "Moving paddle 1: " << yDist;
+  cout << "Moving paddle 1: " << yDist;
   p1Paddle.pos.x += yDist;
 
-  LOG(INFO) << "New Paddle height: " << p1Paddle.pos.x;
+  cout << "New Paddle height: " << p1Paddle.pos.x;
 
   if(p1Paddle.pos.x > (tableHeight - (p1Paddle.height / 2)))
   {
@@ -114,5 +114,5 @@ void Table::moveP1Paddle(float yDist)
     p1Paddle.pos.x = (p1Paddle.height / 2);
   }
   
-  LOG(INFO) << "New Paddle height: " << p1Paddle.pos.x;
+  cout << "New Paddle height: " << p1Paddle.pos.x;
 }

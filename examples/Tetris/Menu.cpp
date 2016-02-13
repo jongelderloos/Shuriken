@@ -1,7 +1,6 @@
 #include "Menu.h"
 #include "stdio.h"
 #include "Windows.h"
-#include "easylogging++.h"
 
 HANDLE menuOutput;
 COORD menuPos;
@@ -89,76 +88,76 @@ void Menu::menuUp()
 
 void Menu::draw(void)
 {
-  system("CLS");
+  //system("CLS");
 
-  menuPos.X = 0;
-  menuPos.Y = 0;
-  SetConsoleCursorPosition(menuOutput, menuPos);
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("*                     *\n");
-  printf("***********************\n");
+  //menuPos.X = 0;
+  //menuPos.Y = 0;
+  //SetConsoleCursorPosition(menuOutput, menuPos);
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("*                     *\n");
+  //printf("***********************\n");
 
-  menuPos.X = 6;
-  menuPos.Y = 6;
-  SetConsoleCursorPosition(menuOutput, menuPos);
+  //menuPos.X = 6;
+  //menuPos.Y = 6;
+  //SetConsoleCursorPosition(menuOutput, menuPos);
   if( menuState == MENU_START )
   {
-    SetConsoleTextAttribute(menuOutput, BACKGROUND_GREEN);
+    //SetConsoleTextAttribute(menuOutput, BACKGROUND_GREEN);
   }
   else
   {
-    SetConsoleTextAttribute(menuOutput, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
+    //SetConsoleTextAttribute(menuOutput, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
   }
-  printf("New Game");
+  //printf("New Game");
 
-  menuPos.X = 6;
-  menuPos.Y = 8;
-  SetConsoleCursorPosition(menuOutput, menuPos);
+  //menuPos.X = 6;
+  //menuPos.Y = 8;
+  //SetConsoleCursorPosition(menuOutput, menuPos);
   if( menuState == MENU_HIGHSCORES )
   {
-    SetConsoleTextAttribute(menuOutput, BACKGROUND_GREEN);
+    //SetConsoleTextAttribute(menuOutput, BACKGROUND_GREEN);
   }
   else
   {
-    SetConsoleTextAttribute(menuOutput, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
+    //SetConsoleTextAttribute(menuOutput, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
   }
-  printf("High Scores");
+  //printf("High Scores");
 
-  menuPos.X = 6;
-  menuPos.Y = 10;
-  SetConsoleCursorPosition(menuOutput, menuPos);
+  //menuPos.X = 6;
+  //menuPos.Y = 10;
+  //SetConsoleCursorPosition(menuOutput, menuPos);
   if( menuState == MENU_QUIT )
   {
-    SetConsoleTextAttribute(menuOutput, BACKGROUND_GREEN);
+    //SetConsoleTextAttribute(menuOutput, BACKGROUND_GREEN);
   }
   else
   {
-    SetConsoleTextAttribute(menuOutput, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
+    //SetConsoleTextAttribute(menuOutput, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
   }
-  printf("Exit");
+  //printf("Exit");
 
-  SetConsoleTextAttribute(menuOutput, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
+  //SetConsoleTextAttribute(menuOutput, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
 }
 

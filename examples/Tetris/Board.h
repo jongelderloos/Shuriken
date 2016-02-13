@@ -52,6 +52,7 @@ public:
   bool isRunning(void);
   void handleInput(char);
   void update(void);
+  void setVideoMemory(void*, int, int);
   void draw(void);
   int getDesiredFPS(void);
   unsigned int* getMsProcessTime(void);
@@ -60,6 +61,7 @@ public:
   void evalBoard(void);
   void processBoard(void);
   void drawBoard(void);
+  void renderBlock(int, int, uint32_t);
   ROW_STATE getRowState(std::vector<Block*>);
   int getRowsMade(void);
   void addBlock(void);
@@ -80,6 +82,9 @@ private:
   unsigned int msProcessTime;
   bool running;
   GAME_STATE gameState;
+  void* videoMemPtr;
+  int windowWidth;
+  int windowHeight;
 };
 
 #endif // BOARD_H_

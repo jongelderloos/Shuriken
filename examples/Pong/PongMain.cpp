@@ -1,31 +1,11 @@
-//#define GLEW_STATIC
-
-// Disable default log creation
-#ifndef ELPP_NO_DEFAULT_LOG_FILE
-#define ELPP_NO_DEFAULT_LOG_FILE
-#endif
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 #include <time.h>
 #include "engine.h"
-#include "easylogging++.h"
 #include "Table.h"
-//#include <GL/glew.h>
-//#include <GLFW/glfw3.h>
 
 using namespace std;
-
-//#define GLFW_INCLUDE_GLU
-
-#ifndef LOGGING
-INITIALIZE_EASYLOGGINGPP
-#define LOGGING
-#endif
-
-//extern GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path);
 
 
 //int main(int argc, char **argv)
@@ -126,11 +106,6 @@ int main()
     printf("after loop");
 
   */
-  
-  // Setup logging
-  el::Configurations conf("logging.conf");
-  el::Loggers::reconfigureLogger("default", conf);
-  el::Loggers::reconfigureAllLoggers(conf);
   
   srand(time(0));
 

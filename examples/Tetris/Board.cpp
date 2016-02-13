@@ -1,8 +1,6 @@
 #include "Board.h"
 #include "stdio.h"
 #include "Windows.h"
-#include "easylogging++.h"
-
 
 
 const int blocks_loc[][8] = {{ 0, 0,  0, 0,  0, 0,  0, 0  },   // BLOCK_NONE
@@ -73,7 +71,7 @@ Board::~Board()
 
 void Board::initializeBoard(void)
 {
-  LOG(INFO) << "Initializing board";
+  OutputDebugStringA("Initializing board");
   for(int i = 0; i < height; i++)
   {
     std::vector<Block*> curRow;
@@ -94,7 +92,7 @@ void Board::initializeBoard(void)
 
 void Board::clearBoard(void)
 {
-  LOG(INFO) << "Clearing board";
+  OutputDebugStringA("Clearing board");
   for(auto row: board)
   {
     for(auto block: row)
@@ -900,10 +898,11 @@ void Board::handleInput(char key)
   case 0x1B:
     if((gameState == GAME_RUNNING) || (gameState == GAME_END))
     {
-      LOG(INFO) << "Ending game";
+      OutputDebugStringA("Ending game");
       gameState = GAME_END;
       running = false;
-      system("CLS");
+      //system("CLS");
+      // TODO: clear screen
     }
   default:
     break;
@@ -948,120 +947,81 @@ unsigned int* Board::getMsProcessTime(void)
   return &msProcessTime;
 }
 
+void Board::setVideoMemory(void* memory, int width, int height)
+{
+  videoMemPtr = memory;
+  windowWidth = width;
+  windowHeight = height;
+}
+
 void Board::draw(void)
 {
-
   if(gameState == GAME_RUNNING)
   { 
-    system("CLS");
+    // draw the border
+    uint8_t* row = (uint8_t*)videoMemPtr;
 
-    pos.X = 0;
-    pos.Y = 0;
-    SetConsoleCursorPosition(output, pos);
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("*        *            *\n");
-    printf("***********************\n");
-
-    pos.X = 11;
-    pos.Y = 6;
-    SetConsoleCursorPosition(output, pos);
-    printf("Score:");
-    pos.X = 11;
-    pos.Y = 7;
-    SetConsoleCursorPosition(output, pos);
-    printf("%d", score);
-    pos.X = 11;
-    pos.Y = 9;
-    SetConsoleCursorPosition(output, pos);
-    printf("Rows made:");
-    pos.X = 11;
-    pos.Y = 10;
-    SetConsoleCursorPosition(output, pos);
-    printf("%d", totalRowsMade);
-    pos.X = 11;
-    pos.Y = 12;
-    SetConsoleCursorPosition(output, pos);
-    printf("Modifier:");
-    pos.X = 11;
-    pos.Y = 13;
-    SetConsoleCursorPosition(output, pos);
-    printf("%d", modifier);
-    pos.X = 11;
-    pos.Y = 15;
-    SetConsoleCursorPosition(output, pos);
-    printf("Proc Time:");
-    pos.X = 11;
-    pos.Y = 16;
-    SetConsoleCursorPosition(output, pos);
-    printf("%d", msProcessTime);
-
-    pos.X = 0;
-    pos.Y = 0;
-    SetConsoleCursorPosition(output, pos);
+    for(int y = 0; y < windowHeight; y++)
+    {
+      uint32_t* pixel = (uint32_t*)row;
+      for(int x = 0; x < windowWidth; x++)
+      {
+        if((((x >= 0) && (x <= 25)) || ((x >= 225) && (x <= 250))) ||
+          (((y >= 0) && (y <= 25)) || ((y >= 625) && (y <= 650))))
+        {
+          //memPtr[x+y] = 0xA4A4A4A4;
+          *pixel++ = 0xA4A4A4A4;
+        }
+        else
+        {
+          //memPtr[x+y] = 0x0;
+          *pixel++ = 0x0;
+        }
+      }
+      row += windowWidth * 4;
+    }
 
     this->drawBoard();
   }
 
   if(gameState == GAME_PAUSE)
   {
-    pos.X = 1;
-    pos.Y = 10;
-    SetConsoleCursorPosition(output, pos);
-    printf("********");
-    pos.X = 1;
-    pos.Y = 11;
-    SetConsoleCursorPosition(output, pos);
-    printf("  GAME  ");
-    pos.X = 1;
-    pos.Y = 12;
-    SetConsoleCursorPosition(output, pos);
-    printf(" PAUSED ");
-    pos.X = 1;
-    pos.Y = 13;
-    SetConsoleCursorPosition(output, pos);
-    printf("********");
+    //pos.X = 1;
+    //pos.Y = 10;
+    //SetConsoleCursorPosition(output, pos);
+    //printf("********");
+    //pos.X = 1;
+    //pos.Y = 11;
+    //SetConsoleCursorPosition(output, pos);
+    //printf("  GAME  ");
+    //pos.X = 1;
+    //pos.Y = 12;
+    //SetConsoleCursorPosition(output, pos);
+    //printf(" PAUSED ");
+    //pos.X = 1;
+    //pos.Y = 13;
+    //SetConsoleCursorPosition(output, pos);
+    //printf("********");
   }
 
   if(gameState == GAME_END)
   {
-    pos.X = 1;
-    pos.Y = 10;
-    SetConsoleCursorPosition(output, pos);
-    printf("********");
-    pos.X = 1;
-    pos.Y = 11;
-    SetConsoleCursorPosition(output, pos);
-    printf("  GAME  ");
-    pos.X = 1;
-    pos.Y = 12;
-    SetConsoleCursorPosition(output, pos);
-    printf("  OVER  ");
-    pos.X = 1;
-    pos.Y = 13;
-    SetConsoleCursorPosition(output, pos);
-    printf("********");
+    //pos.X = 1;
+    //pos.Y = 10;
+    //SetConsoleCursorPosition(output, pos);
+    //printf("********");
+    //pos.X = 1;
+    //pos.Y = 11;
+    //SetConsoleCursorPosition(output, pos);
+    //printf("  GAME  ");
+    //pos.X = 1;
+    //pos.Y = 12;
+    //SetConsoleCursorPosition(output, pos);
+    //printf("  OVER  ");
+    //pos.X = 1;
+    //pos.Y = 13;
+    //SetConsoleCursorPosition(output, pos);
+    //printf("********");
   }
 }
 
@@ -1070,59 +1030,58 @@ void Board::drawBoard(void)
 
   for(int i = height-1; i >= 0; i--)
   {
-    printf("*");
     for(int j = 0; j < width; j++)
     { 
+      uint32_t value = 0x0;
       if(this->getRowState(i) == STATE_FLASH)
       {  
-        printf("[");
+        value = 0xFFFFFF;
       }
       else if(this->getRowState(i) == STATE_DELETE)
       {
-        printf(" ");
+        value = 0x0;
       }
       else
       {
+        uint8_t* row = (uint8_t*)videoMemPtr;
         switch(board[i][j]->getBlockType())
         {
         case BLOCK_STRAIGHT:
-          SetConsoleTextAttribute(output, FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE );
-          printf("C");
-          break;
+          value = 0x2EFEF7;
         case BLOCK_SQUARE:
-          SetConsoleTextAttribute(output, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN );
-          printf("Y");
-          break;
+          value = 0xFFFF00;
         case BLOCK_Z:
-          SetConsoleTextAttribute(output, FOREGROUND_INTENSITY | FOREGROUND_RED );
-          printf("R");
-          break;
+          value = 0xFF0000;
         case BLOCK_Z_R:
-          SetConsoleTextAttribute(output, FOREGROUND_INTENSITY | FOREGROUND_GREEN);
-          printf("G");
-          break;
+          value = 0x00FF00;
         case BLOCK_L:
-          SetConsoleTextAttribute(output, FOREGROUND_RED | FOREGROUND_GREEN );
-          printf("O");
-          break;
+          value = 0xFF8000;
         case BLOCK_L_R:
-          SetConsoleTextAttribute(output, FOREGROUND_INTENSITY | FOREGROUND_BLUE );
-          printf("B");
-          break;
+          value = 0x0000FF;
         case BLOCK_T:
-          SetConsoleTextAttribute(output, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE );
-          printf("P");
-          break;
+          value = 0x8000FF;
         default:
-          SetConsoleTextAttribute(output, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
-          printf(" ");
           break;
         }
-        SetConsoleTextAttribute(output, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
       }
+      renderBlock(j, i, value);
     }
-    printf("*\n");
   }
-  printf("**********");
+}
+
+void Board::renderBlock(int xCoord, int yCoord, uint32_t colorVal)
+{
+  uint8_t* row = (uint8_t*)videoMemPtr;
+  row += ((yCoord+1)*windowWidth*25*4);
+  for(int y = 0; y < 25; y++)
+  {
+    uint32_t* pixel = (uint32_t*)row;
+    pixel += (xCoord+1)*25;
+    for(int x = 0; x < 25; x++)
+    {
+      *pixel++ = colorVal;
+    }
+    row += windowWidth * 4;
+ }
 }
 

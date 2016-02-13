@@ -34,6 +34,13 @@ __declspec(dllexport) void Game::update(void)
 {
 }
 
+__declspec(dllexport) void Game::setVideoMemory(void* memoryPtr, int width, int height)
+{
+  videoMemPtr = memoryPtr;
+  windowWidth = width;
+  windowHeight = height;
+}
+
 __declspec(dllexport) void Game::draw(void)
 {
 }

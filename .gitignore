@@ -14,6 +14,20 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+#assets for now
+*.bmp
+*.xcf
+
+#build files
+*.obj
+*.dll
+*.exp
+*.ilk
+*.lib
+*.pdb
+*.exe
+*.suo
+
 # Windows shortcuts
 *.lnk
 

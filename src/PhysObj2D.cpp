@@ -1,6 +1,8 @@
 #include "PhysObj2D.h"
 #include "Box.h"
-#include "easylogging++.h"
+#include <iostream>
+
+using namespace std;
 
 PhysObj2D::PhysObj2D()
 {
@@ -59,7 +61,7 @@ void PhysObj2D::handleCollision(PhysObj2D* other) throw (std::logic_error)
   }
   catch(std::bad_cast& e)
   {
-    LOG(ERROR) << "Bad cast error: " << e.what();
+    cout << "Bad cast error: " << e.what();
   }
 
   if((thisHitBox == NULL) || (otherHitBox == NULL))
@@ -195,7 +197,7 @@ void PhysObj2D::addCollision(CollisionData2D* col)
   }
   catch(const std::bad_alloc& e)
   {
-    LOG(ERROR) << "Bad alloc error: " << e.what();
+    cout << "Bad alloc error: " << e.what();
   }
 }
 
@@ -212,7 +214,7 @@ void PhysObj2D::removeCollision(CollisionData2D* col)
       }
       catch(const std::out_of_range& e)
       {
-        LOG(ERROR) << "Out of range error: " << e.what();
+        cout << "Out of range error: " << e.what();
       }
       break;
     }
