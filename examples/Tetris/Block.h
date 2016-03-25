@@ -15,6 +15,7 @@ typedef enum
   BLOCK_T
 } BLOCK_TYPE;
 
+// TODO: Is this used anywhere?
 typedef enum
 {
   STATE_0 = 0,
