@@ -3,6 +3,7 @@
 
 #include "Block.h"
 #include <vector>
+#include "Render2D.h"
 
 #define MAX_WIDTH  8
 #define MAX_HEIGHT 20
@@ -85,6 +86,7 @@ private:
   void* videoMemPtr;
   int windowWidth;
   int windowHeight;
+  Render2D render;
 };
 
 #endif // BOARD_H_
