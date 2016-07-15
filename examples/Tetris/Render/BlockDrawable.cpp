@@ -10,7 +10,7 @@ BlockDrawable::BlockDrawable()
 
 BlockDrawable::BlockDrawable(BLOCK_TYPE type, int x, int y)
 {
-  type = type;
+  this->type = type;
   xCoord = x;
   yCoord = y;
 }
@@ -42,6 +42,9 @@ void BlockDrawable::Render(void* videoMemPtr, int windowWidth)
   case BLOCK_T:
     value = 0x8000FF;
     break;
+  case BLOCK_BORDER:
+    value = 0xA4A4A4A4;
+    break;
   default:
     break;
   }
@@ -57,5 +60,5 @@ void BlockDrawable::Render(void* videoMemPtr, int windowWidth)
       *pixel++ = value;
     }
     row += windowWidth * 4;
- }
+  }
 }

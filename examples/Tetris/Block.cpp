@@ -3,7 +3,7 @@
 
 Block::Block()
 {
-  type = (BLOCK_TYPE)((rand() % (NUM_BLOCK_TYPES-1)) + 1);
+  type = (BLOCK_TYPE)((rand() % (NUM_BLOCK_TYPES-2)) + 2);
   evaluated = false;
 }
 

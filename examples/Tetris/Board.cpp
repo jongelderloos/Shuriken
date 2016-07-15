@@ -1,9 +1,11 @@
 #include "Board.h"
 #include "stdio.h"
 #include "Windows.h"
+#include "BlockDrawable.h"
 
 
 const int blocks_loc[][8] = {{ 0, 0,  0, 0,  0, 0,  0, 0  },   // BLOCK_NONE
+                             { 0, 0,  0, 0,  0, 0,  0, 0  },   // BLOCK_BORDER
                              { 3, 19, 3, 18, 3, 17, 3, 16 },   // BLOCK_STRAIGHT
                              { 3, 18, 4, 18, 3, 17, 4, 17 },   // BLOCK_SQUARE
                              { 4, 18, 3, 17, 4, 17, 3, 16 },   // BLOCK_Z
@@ -78,6 +80,9 @@ void Board::initializeBoard(void)
     for(int j = 0; j < width; j++)
     {
       curRow.push_back( new Block(BLOCK_NONE) );
+      BlockDrawable *curBlock = new BlockDrawable(BLOCK_NONE, j + 1, i + 1);
+      curBlock->id = j + (i * width);
+      render.addToForeground(curBlock);
     }
     board.push_back(curRow);
     rowState.push_back(STATE_NORMAL);
@@ -87,6 +92,40 @@ void Board::initializeBoard(void)
   for(int i = 0; i < 8; i++)
   {
     fall.coords[i] = 0;
+  }
+
+  // Create blocks for background
+  for(int y = 0; y < 22; y++)
+  {
+    for(int x = 0; x < 15; x++)
+    {
+      if(((x == 0) || (x == 9) || (x == 14) || (y == 0) || (y == 21)) ||
+        (((x >= 10) && (x < 14)) && (y == 16)))
+      {
+        BlockDrawable *curBlock = new BlockDrawable(BLOCK_BORDER, x, y);
+        curBlock->id = 3000 + x + (y * height);
+        render.addToBackground(curBlock);
+      }
+    }
+  }
+
+  // Create blocks for the on deck area background
+  for(int i = 17; i < 21; i++)
+  {
+    for(int j = 10; j < 14; j++)
+    {
+      BlockDrawable *curBlock = new BlockDrawable(BLOCK_NONE, j, i);
+      curBlock->id = 2000 + j + (i * 4);
+      render.addToBackground(curBlock);
+    }
+  }
+
+  // Create 4 place holder blocks for the on deck blocks
+  for(int i = 0; i < 4; i++)
+  {
+    BlockDrawable *curBlock = new BlockDrawable(BLOCK_NONE, blocks_loc[0][2 * i] + 8, blocks_loc[0][(2 * i) + 1] + 1);
+    curBlock->id = 1001 + i;
+    render.addToForeground(curBlock);
   }
 }
 
@@ -374,6 +413,14 @@ void Board::addBlock(void)
   
   type = blockOnDeck.getBlockType();
   blockOnDeck = newBlock;
+
+  BLOCK_TYPE onDeckType = blockOnDeck.getBlockType();
+  for(int i = 0; i < 4; i++)
+  {
+    BlockDrawable *curBlock = new BlockDrawable(onDeckType, blocks_loc[onDeckType][2 * i] + 8, blocks_loc[onDeckType][(2 * i) + 1] + 1);
+    curBlock->id = 1001 + i;
+    render.updateForeground(curBlock);
+  }
   
   // If there is space on the board where this block is going
   if(board[blocks_loc[type][1]][blocks_loc[type][0]]->getBlockType() == BLOCK_NONE &&
@@ -923,7 +970,6 @@ void Board::update(void)
     }
   }
 
-
   rowsMade = this->getRowsMade();
   totalRowsMade += rowsMade;
   bonus = rowsMade;
@@ -952,37 +998,27 @@ void Board::setVideoMemory(void* memory, int width, int height)
   videoMemPtr = memory;
   windowWidth = width;
   windowHeight = height;
+  render.setWindowSize(windowWidth, windowHeight);
+  render.setScreenBuffer(videoMemPtr);
 }
 
 void Board::draw(void)
 {
   if(gameState == GAME_RUNNING)
   { 
-    // draw the border
-    uint8_t* row = (uint8_t*)videoMemPtr;
-
-    for(int y = 0; y < windowHeight; y++)
+    // Update the blocks on the board
+    for(int i = 0; i < height; i++)
     {
-      uint32_t* pixel = (uint32_t*)row;
-      for(int x = 0; x < windowWidth; x++)
+      for(int j = 0; j < width; j++)
       {
-        if((((x >= 0) && (x < 25)) || ((x >= 225) && (x < 250)) || ((x >= 350) && (x < 375))) ||
-          (((y >= 0) && (y < 25)) || ((y >= 525) && (y < 550))) ||
-          (((x >= 250) && (x < 350)) && ((y >= 400) && (y < 425))))
-        {
-          //memPtr[x+y] = 0xA4A4A4A4;
-          *pixel++ = 0xA4A4A4A4;
-        }
-        else
-        {
-          //memPtr[x+y] = 0x0;
-          *pixel++ = 0x0;
-        }
+        BLOCK_TYPE type = board[i][j]->getBlockType();
+        BlockDrawable *curBlock = new BlockDrawable(type, j + 1, i + 1);
+        curBlock->id = j + (i * width);
+        render.updateForeground(curBlock);
       }
-      row += windowWidth * 4;
     }
 
-    this->drawBoard();
+    render.run();
   }
 
   if(gameState == GAME_PAUSE)
@@ -1024,101 +1060,5 @@ void Board::draw(void)
     //SetConsoleCursorPosition(output, pos);
     //printf("********");
   }
-}
-
-void Board::drawBoard(void)
-{
-  // Draw the blocks in play
-  for(int i = height-1; i >= 0; i--)
-  {
-    for(int j = 0; j < width; j++)
-    { 
-      BLOCK_TYPE type;
-      if(this->getRowState(i) == STATE_FLASH)
-      {  
-        // TODO: need a type for flashing state
-        type = BLOCK_NONE;
-      }
-      else if(this->getRowState(i) == STATE_DELETE)
-      {
-        type = BLOCK_NONE;
-      }
-      else
-      {
-        type = board[i][j]->getBlockType();
-      }
-      // add one to each to account for the boarder
-      renderBlock(j+1, i+1, type);
-    }
-  }
-
-  // Clear the block on deck area
-  for(int i = 17; i < 21; i++)
-  {
-    for(int j = 10; j < 14; j++)
-    {
-      renderBlock(j, i, BLOCK_NONE);
-    }
-  }
-
-  // Draw the block on deck
-  BLOCK_TYPE type = blockOnDeck.getBlockType();
-  int locations[8];
-  for(int i = 0; i < 8; i++)
-  {
-    // if its an x coord add 5 to shift it to the block on deck area,
-    // if its a y coord add 1 to offset the bottom border
-    locations[i] = i%2 ? blocks_loc[type][i] + 1 : blocks_loc[type][i] + 8;
-  }
-
-  for(int i = 0; i < 8; i+=2)
-  {
-    renderBlock(locations[i], locations[i+1], type);
-  }
-}
-
-void Board::renderBlock(int xCoord, int yCoord, BLOCK_TYPE type)
-{
-  uint32_t value = 0x0;
-
-  switch(type)
-  {
-  case BLOCK_STRAIGHT:
-    value = 0x2EFEF7;
-    break;
-  case BLOCK_SQUARE:
-    value = 0xFFFF00;
-    break;
-  case BLOCK_Z:
-    value = 0xFF0000;
-    break;
-  case BLOCK_Z_R:
-    value = 0x00FF00;
-    break;
-  case BLOCK_L:
-    value = 0xFF8000;
-    break;
-  case BLOCK_L_R:
-    value = 0x0000FF;
-    break;
-  case BLOCK_T:
-    value = 0x8000FF;
-    break;
-  default:
-    break;
-  }
-
-  uint8_t* row = (uint8_t*)videoMemPtr;
-  row += ((yCoord)*windowWidth*25*4);
-  for(int y = 0; y < 25; y++)
-  {
-    uint32_t* pixel = (uint32_t*)row;
-    pixel += (xCoord)*25;
-    for(int x = 0; x < 25; x++)
-    {
-      *pixel++ = value;
-    }
-    row += windowWidth * 4;
- }
 }
 

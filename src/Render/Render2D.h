@@ -14,9 +14,12 @@ public:
   void setScreenCoords(int, int);
   void setScaleProperties(bool, bool);
   void setWindowSize(int, int);
-  void addToForeground(Drawable2D);
-  void updateForeground(Drawable2D);
-  void remoreForeground(Drawable2D);
+  void addToForeground(Drawable2D*);
+  void updateForeground(Drawable2D*);
+  void removeForeground(Drawable2D*);
+  void addToBackground(Drawable2D*);
+  void updateBackground(Drawable2D*);
+  void removeBackground(Drawable2D*);
   void setScreenBuffer(void*);
   void run();
   
@@ -27,9 +30,9 @@ private:
   int coordHeight;
   int windowWidth;
   int windowHeight;
-  forward_list<Drawable2D> background;
-  forward_list<Drawable2D> middleground;
-  forward_list<Drawable2D> foreground;
+  forward_list<Drawable2D*> background;
+  forward_list<Drawable2D*> middleground;
+  forward_list<Drawable2D*> foreground;
   //List<Drawable2D> priority;
   void* screenBuffer;
 };

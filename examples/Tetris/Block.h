@@ -6,6 +6,7 @@
 typedef enum
 {
   BLOCK_NONE,
+  BLOCK_BORDER,
   BLOCK_STRAIGHT,
   BLOCK_SQUARE,
   BLOCK_Z,
@@ -15,7 +16,6 @@ typedef enum
   BLOCK_T
 } BLOCK_TYPE;
 
-// TODO: Is this used anywhere?
 typedef enum
 {
   STATE_0 = 0,

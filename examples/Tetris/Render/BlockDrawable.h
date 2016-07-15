@@ -4,12 +4,12 @@
 #include "Drawable2D.h"
 #include "Block.h"
 
-class BlockDrawable : public Drawable2D
+class __declspec(dllexport) BlockDrawable : public Drawable2D
 {
 public:
   BlockDrawable();
   BlockDrawable(BLOCK_TYPE, int, int);
-  void Render(void*, int);
+  void Render(void*, int) override;
   BLOCK_TYPE type;
   int xCoord;
   int yCoord;
