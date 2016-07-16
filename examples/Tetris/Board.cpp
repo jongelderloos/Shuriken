@@ -63,7 +63,7 @@ Board::Board()
   width = MAX_WIDTH;
   height = MAX_HEIGHT;
   msProcessTime = 250;
-  initializeBoard();
+  //initializeBoard();
   gameState = GAME_RUNNING;
 }
 
@@ -83,7 +83,7 @@ void Board::initializeBoard(void)
       curRow.push_back( new Block(BLOCK_NONE) );
       BlockDrawable *curBlock = new BlockDrawable(BLOCK_NONE, j + 1, i + 1);
       curBlock->id = j + (i * width);
-      render.addToMiddleground(curBlock);
+      render->addToMiddleground(curBlock);
     }
     board.push_back(curRow);
     rowState.push_back(STATE_NORMAL);
@@ -105,7 +105,7 @@ void Board::initializeBoard(void)
       {
         BlockDrawable *curBlock = new BlockDrawable(BLOCK_BORDER, x, y);
         curBlock->id = 3000 + x + (y * height);
-        render.addToBackground(curBlock);
+        render->addToBackground(curBlock);
       }
     }
   }
@@ -117,7 +117,7 @@ void Board::initializeBoard(void)
     {
       BlockDrawable *curBlock = new BlockDrawable(BLOCK_NONE, j, i);
       curBlock->id = 2000 + j + (i * 4);
-      render.addToBackground(curBlock);
+      render->addToBackground(curBlock);
     }
   }
 
@@ -126,16 +126,16 @@ void Board::initializeBoard(void)
   {
     BlockDrawable *curBlock = new BlockDrawable(BLOCK_NONE, blocks_loc[0][2 * i] + 8, blocks_loc[0][(2 * i) + 1] + 1);
     curBlock->id = 1001 + i;
-    render.addToMiddleground(curBlock);
+    render->addToMiddleground(curBlock);
   }
 
   TextDrawable *scoreText = new TextDrawable("SCORE: ", 70, 70, true);
   scoreText->id = 5001;
-  render.addToForeground(scoreText);
+  render->addToForeground(scoreText);
 
   TextDrawable *scoreNumber = new TextDrawable("0000000000", 70, 68, true);
   scoreNumber->id = 5002;
-  render.addToForeground(scoreNumber);
+  render->addToForeground(scoreNumber);
 }
 
 void Board::clearBoard(void)
@@ -428,7 +428,7 @@ void Board::addBlock(void)
   {
     BlockDrawable *curBlock = new BlockDrawable(onDeckType, blocks_loc[onDeckType][2 * i] + 8, blocks_loc[onDeckType][(2 * i) + 1] + 1);
     curBlock->id = 1001 + i;
-    render.updateMiddleground(curBlock);
+    render->updateMiddleground(curBlock);
   }
   
   // If there is space on the board where this block is going
@@ -989,7 +989,7 @@ void Board::update(void)
   sprintf(number, "%010d", score);
   TextDrawable *scoreNumber = new TextDrawable(number, 70, 68, true);
   scoreNumber->id = 5002;
-  render.updateForeground(scoreNumber);
+  render->updateForeground(scoreNumber);
 
   if((msProcessTime >= 50) && (rowsMade > 0))
   {
@@ -1013,16 +1013,24 @@ void Board::setVideoMemory(void* memory, int width, int height)
   videoMemPtr = memory;
   windowWidth = width;
   windowHeight = height;
-  render.setWindowSize(windowWidth, windowHeight);
-  render.setScreenBuffer(videoMemPtr);
+}
+
+void Board::setRender(Render2D *render)
+{
+  this->render = render;
+}
+
+void Board::removeText(void)
+{
+    render->removeForeground(6001);
+    render->removeForeground(6002);
 }
 
 void Board::draw(void)
 {
   if(gameState == GAME_RUNNING)
   { 
-    render.removeForeground(6001);
-    render.removeForeground(6002);
+    removeText();
 
     // Update the blocks on the board
     for(int i = 0; i < height; i++)
@@ -1032,25 +1040,27 @@ void Board::draw(void)
         BLOCK_TYPE type = board[i][j]->getBlockType();
         BlockDrawable *curBlock = new BlockDrawable(type, j + 1, i + 1);
         curBlock->id = j + (i * width);
-        render.updateMiddleground(curBlock);
+        render->updateMiddleground(curBlock);
       }
     }
   }
 
   if(gameState == GAME_PAUSE)
   {
-    TextDrawable *gamePauseText = new TextDrawable("GAME PAUSED", 25, 50, false);
+    TextDrawable *gamePauseText = new TextDrawable("GAME PAUSED", 16, 50, false);
     gamePauseText->id = 6001;
-    render.addToForeground(gamePauseText);
+    gamePauseText->SetSize(2);
+    render->addToForeground(gamePauseText);
   }
 
   if(gameState == GAME_END)
   {
-    TextDrawable *gameOverText = new TextDrawable("GAME OVER", 26.5, 50, false);
+    TextDrawable *gameOverText = new TextDrawable("GAME OVER", 18, 50, false);
     gameOverText->id = 6002;
-    render.addToForeground(gameOverText);
+    gameOverText->SetSize(2);
+    render->addToForeground(gameOverText);
   }
     
-  render.run();
+  render->run();
 }
 

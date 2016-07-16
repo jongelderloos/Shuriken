@@ -2,6 +2,7 @@
 #define MENU_H_
 
 #include "menu.h"
+#include "Render2D.h"
 
 typedef enum
 {
@@ -23,9 +24,18 @@ public:
   void menuDown();
   void menuUp();
   void draw();
+  void setVideoMemory(void* memory, int width, int height);
+  void setRender(Render2D *render);
+  void addItems();
+  void removeItems();
 private:
   bool selected;
   MENU_STATE menuState;
+  void* videoMemPtr;
+  int windowWidth;
+  int windowHeight;
+  Render2D *render;
+  bool itemsAdded;
 };
 
 #endif // MENU_H_

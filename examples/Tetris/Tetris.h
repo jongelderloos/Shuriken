@@ -32,6 +32,7 @@ private:
   Board gameBoard;
   APP_STATE appState;
   unsigned int msProcessTime;
+  Render2D render;
 };
 
 #endif // TETRIS_H_

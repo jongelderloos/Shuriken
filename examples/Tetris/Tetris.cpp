@@ -16,8 +16,8 @@ void Tetris::start(void)
   Game::start();
  
   // TODO: set back to menu once we have graphics
-  //appState = APP_MENU;
-  appState = APP_RUNNING;
+  appState = APP_MENU;
+  //appState = APP_RUNNING;
   msProcessTime = 250;
 }
 
@@ -38,6 +38,8 @@ void Tetris::update(void)
 {
   if(appState == APP_MENU)
   {
+    gameBoard.removeText();
+    mainMenu.addItems();
     int ret;
     ret = mainMenu.getSelected();
     
@@ -62,14 +64,15 @@ void Tetris::update(void)
     
   if(appState == APP_RUNNING)
   {
+    mainMenu.removeItems();
     gameBoard.update();
     
     if(gameBoard.isRunning() == false)
     {
       OutputDebugStringA("Game stoped runnung");
       // TODO: set back to menu once we have graphics
-      //appState = APP_MENU;
-      appState = APP_RUNNING;
+      appState = APP_MENU;
+      //appState = APP_RUNNING;
     }
   }
 }
@@ -86,7 +89,17 @@ unsigned int* Tetris::getMsProcessTime(void)
 
 void Tetris::setVideoMemory(void* memoryPtr, int width, int height)
 {
+  mainMenu.setVideoMemory(memoryPtr, width, height);
   gameBoard.setVideoMemory(memoryPtr, width, height);
+
+  render.setWindowSize(width, height);
+  render.setScreenBuffer(memoryPtr);
+
+  mainMenu.setRender(&render);
+  gameBoard.setRender(&render);
+
+  // TODO: could find a better place to put this
+  gameBoard.initializeBoard();
 }
 
 void Tetris::draw(void)
@@ -100,4 +113,5 @@ void Tetris::draw(void)
   {
     gameBoard.draw();
   }
+
 }

@@ -54,6 +54,8 @@ public:
   void handleInput(char);
   void update(void);
   void setVideoMemory(void*, int, int);
+  void removeText(void);
+  void setRender(Render2D *render);
   void draw(void);
   int getDesiredFPS(void);
   unsigned int* getMsProcessTime(void);
@@ -86,7 +88,7 @@ private:
   void* videoMemPtr;
   int windowWidth;
   int windowHeight;
-  Render2D render;
+  Render2D *render;
 };
 
 #endif // BOARD_H_

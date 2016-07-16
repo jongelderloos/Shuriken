@@ -1,6 +1,7 @@
 #include "Menu.h"
 #include "stdio.h"
 #include "Windows.h"
+#include "TextDrawable.h"
 
 HANDLE menuOutput;
 COORD menuPos;
@@ -13,6 +14,7 @@ Menu::Menu()
   menuState = MENU_START;
   selected = false;
   menuOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+  itemsAdded = false;
 }
 
 Menu::~Menu()
@@ -28,7 +30,7 @@ void Menu::handleInput(char key)
       menuUp();
       break;
     case 0x73:
-    case 0x52:
+    case 0x53:
       menuDown();
       break;
     case 0x0D:
@@ -86,78 +88,100 @@ void Menu::menuUp()
   menuState = (MENU_STATE)menuNum;
 }
 
+void Menu::setVideoMemory(void* memory, int width, int height)
+{
+  videoMemPtr = memory;
+  windowWidth = width;
+  windowHeight = height;
+}
+
+void Menu::setRender(Render2D *render)
+{
+  this->render = render;
+}
+
+void Menu::addItems()
+{
+  if(!itemsAdded)
+  {
+    TextDrawable *startText = new TextDrawable("START", 26, 70, true);
+    startText->id = 8001;
+    startText->SetSize(2);
+    render->addToForeground(startText);
+
+    TextDrawable *highscoresText = new TextDrawable("HIGHSCORES", 19, 60, true);
+    highscoresText->id = 8002;
+    highscoresText->SetSize(2);
+    render->addToForeground(highscoresText);
+
+    TextDrawable *quitText = new TextDrawable("QUIT", 26, 50, true);
+    quitText->id = 8003;
+    quitText->SetSize(2);
+    render->addToForeground(quitText);
+
+    itemsAdded = true;
+  }
+}
+
+void Menu::removeItems()
+{
+  render->removeForeground(8001);
+  render->removeForeground(8002);
+  render->removeForeground(8003);
+
+  itemsAdded = false;
+}
+
 void Menu::draw(void)
 {
-  //system("CLS");
-
-  //menuPos.X = 0;
-  //menuPos.Y = 0;
-  //SetConsoleCursorPosition(menuOutput, menuPos);
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("*                     *\n");
-  //printf("***********************\n");
-
-  //menuPos.X = 6;
-  //menuPos.Y = 6;
-  //SetConsoleCursorPosition(menuOutput, menuPos);
   if( menuState == MENU_START )
   {
-    //SetConsoleTextAttribute(menuOutput, BACKGROUND_GREEN);
+    TextDrawable *startText = new TextDrawable("START", 26, 70, true);
+    startText->id = 8001;
+    startText->SetColor(0xFF0000);
+    startText->SetSize(2);
+    render->updateForeground(startText);
   }
   else
   {
-    //SetConsoleTextAttribute(menuOutput, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
+    TextDrawable *startText = new TextDrawable("START", 26, 70, true);
+    startText->id = 8001;
+    startText->SetSize(2);
+    render->updateForeground(startText);
   }
-  //printf("New Game");
 
-  //menuPos.X = 6;
-  //menuPos.Y = 8;
-  //SetConsoleCursorPosition(menuOutput, menuPos);
   if( menuState == MENU_HIGHSCORES )
   {
-    //SetConsoleTextAttribute(menuOutput, BACKGROUND_GREEN);
+    TextDrawable *highscoresText = new TextDrawable("HIGHSCORES", 19, 60, true);
+    highscoresText->id = 8002;
+    highscoresText->SetColor(0xFF0000);
+    highscoresText->SetSize(2);
+    render->updateForeground(highscoresText);
   }
   else
   {
-    //SetConsoleTextAttribute(menuOutput, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
+    TextDrawable *highscoresText = new TextDrawable("HIGHSCORES", 19, 60, true);
+    highscoresText->id = 8002;
+    highscoresText->SetSize(2);
+    render->updateForeground(highscoresText);
   }
-  //printf("High Scores");
 
-  //menuPos.X = 6;
-  //menuPos.Y = 10;
-  //SetConsoleCursorPosition(menuOutput, menuPos);
   if( menuState == MENU_QUIT )
   {
-    //SetConsoleTextAttribute(menuOutput, BACKGROUND_GREEN);
+    TextDrawable *quitText = new TextDrawable("QUIT", 26, 50, true);
+    quitText->id = 8003;
+    quitText->SetColor(0xFF0000);
+    quitText->SetSize(2);
+    render->updateForeground(quitText);
   }
   else
   {
-    //SetConsoleTextAttribute(menuOutput, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
+    TextDrawable *quitText = new TextDrawable("QUIT", 26, 50, true);
+    quitText->id = 8003;
+    quitText->SetSize(2);
+    render->updateForeground(quitText);
   }
-  //printf("Exit");
 
-  //SetConsoleTextAttribute(menuOutput, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN );
+  render->run();
 }
 
