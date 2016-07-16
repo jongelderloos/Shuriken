@@ -86,12 +86,12 @@ void Render2D::run()
 {
   for(auto item : background)
   {
-    item->Render(screenBuffer, windowWidth);
+    item->Render(screenBuffer, windowWidth, windowHeight);
   }
 
   for(auto item : foreground)
   {
-    item->Render(screenBuffer, windowWidth);
+    item->Render(screenBuffer, windowWidth, windowHeight);
   }
 }
 

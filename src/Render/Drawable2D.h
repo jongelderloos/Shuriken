@@ -7,7 +7,7 @@ class __declspec(dllexport) Drawable2D
 public:
   Drawable2D();
   bool operator==(const Drawable2D&);
-  virtual void Render(void*, int);
+  virtual void Render(void*, int, int);
   int id;
   
 private:

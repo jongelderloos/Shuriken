@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "Windows.h"
 #include "BlockDrawable.h"
+#include "TextDrawable.h"
 
 
 const int blocks_loc[][8] = {{ 0, 0,  0, 0,  0, 0,  0, 0  },   // BLOCK_NONE
@@ -127,6 +128,14 @@ void Board::initializeBoard(void)
     curBlock->id = 1001 + i;
     render.addToForeground(curBlock);
   }
+
+  TextDrawable *scoreText = new TextDrawable("SCORE: ", 70, 70, true);
+  scoreText->id = 5001;
+  render.addToForeground(scoreText);
+
+  TextDrawable *scoreNumber = new TextDrawable("0000000000", 70, 68, true);
+  scoreNumber->id = 5002;
+  render.addToForeground(scoreNumber);
 }
 
 void Board::clearBoard(void)
@@ -975,6 +984,12 @@ void Board::update(void)
   bonus = rowsMade;
   modifier = (totalRowsMade / modifierGap) + 1;
   score += rowsMade * 10 * modifier * bonus;
+
+  char number[11];
+  sprintf(number, "%010d", score);
+  TextDrawable *scoreNumber = new TextDrawable(number, 70, 68, true);
+  scoreNumber->id = 5002;
+  render.updateForeground(scoreNumber);
 
   if((msProcessTime >= 50) && (rowsMade > 0))
   {

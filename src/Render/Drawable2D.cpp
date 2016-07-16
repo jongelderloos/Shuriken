@@ -4,7 +4,7 @@ Drawable2D::Drawable2D()
 {
 }
 
-void Drawable2D::Render(void*, int)
+void Drawable2D::Render(void*, int, int)
 {
 }
 

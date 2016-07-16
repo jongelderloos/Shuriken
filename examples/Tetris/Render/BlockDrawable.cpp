@@ -15,7 +15,7 @@ BlockDrawable::BlockDrawable(BLOCK_TYPE type, int x, int y)
   yCoord = y;
 }
 
-void BlockDrawable::Render(void* videoMemPtr, int windowWidth)
+void BlockDrawable::Render(void* videoMemPtr, int windowWidth, int windowHeight)
 {
   uint32_t value = 0x0;
 
