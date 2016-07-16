@@ -83,7 +83,7 @@ void Board::initializeBoard(void)
       curRow.push_back( new Block(BLOCK_NONE) );
       BlockDrawable *curBlock = new BlockDrawable(BLOCK_NONE, j + 1, i + 1);
       curBlock->id = j + (i * width);
-      render.addToForeground(curBlock);
+      render.addToMiddleground(curBlock);
     }
     board.push_back(curRow);
     rowState.push_back(STATE_NORMAL);
@@ -126,7 +126,7 @@ void Board::initializeBoard(void)
   {
     BlockDrawable *curBlock = new BlockDrawable(BLOCK_NONE, blocks_loc[0][2 * i] + 8, blocks_loc[0][(2 * i) + 1] + 1);
     curBlock->id = 1001 + i;
-    render.addToForeground(curBlock);
+    render.addToMiddleground(curBlock);
   }
 
   TextDrawable *scoreText = new TextDrawable("SCORE: ", 70, 70, true);
@@ -428,7 +428,7 @@ void Board::addBlock(void)
   {
     BlockDrawable *curBlock = new BlockDrawable(onDeckType, blocks_loc[onDeckType][2 * i] + 8, blocks_loc[onDeckType][(2 * i) + 1] + 1);
     curBlock->id = 1001 + i;
-    render.updateForeground(curBlock);
+    render.updateMiddleground(curBlock);
   }
   
   // If there is space on the board where this block is going
@@ -1021,6 +1021,9 @@ void Board::draw(void)
 {
   if(gameState == GAME_RUNNING)
   { 
+    render.removeForeground(6001);
+    render.removeForeground(6002);
+
     // Update the blocks on the board
     for(int i = 0; i < height; i++)
     {
@@ -1029,51 +1032,25 @@ void Board::draw(void)
         BLOCK_TYPE type = board[i][j]->getBlockType();
         BlockDrawable *curBlock = new BlockDrawable(type, j + 1, i + 1);
         curBlock->id = j + (i * width);
-        render.updateForeground(curBlock);
+        render.updateMiddleground(curBlock);
       }
     }
-
-    render.run();
   }
 
   if(gameState == GAME_PAUSE)
   {
-    //pos.X = 1;
-    //pos.Y = 10;
-    //SetConsoleCursorPosition(output, pos);
-    //printf("********");
-    //pos.X = 1;
-    //pos.Y = 11;
-    //SetConsoleCursorPosition(output, pos);
-    //printf("  GAME  ");
-    //pos.X = 1;
-    //pos.Y = 12;
-    //SetConsoleCursorPosition(output, pos);
-    //printf(" PAUSED ");
-    //pos.X = 1;
-    //pos.Y = 13;
-    //SetConsoleCursorPosition(output, pos);
-    //printf("********");
+    TextDrawable *gamePauseText = new TextDrawable("GAME PAUSED", 25, 50, false);
+    gamePauseText->id = 6001;
+    render.addToForeground(gamePauseText);
   }
 
   if(gameState == GAME_END)
   {
-    //pos.X = 1;
-    //pos.Y = 10;
-    //SetConsoleCursorPosition(output, pos);
-    //printf("********");
-    //pos.X = 1;
-    //pos.Y = 11;
-    //SetConsoleCursorPosition(output, pos);
-    //printf("  GAME  ");
-    //pos.X = 1;
-    //pos.Y = 12;
-    //SetConsoleCursorPosition(output, pos);
-    //printf("  OVER  ");
-    //pos.X = 1;
-    //pos.Y = 13;
-    //SetConsoleCursorPosition(output, pos);
-    //printf("********");
+    TextDrawable *gameOverText = new TextDrawable("GAME OVER", 26.5, 50, false);
+    gameOverText->id = 6002;
+    render.addToForeground(gameOverText);
   }
+    
+  render.run();
 }
 

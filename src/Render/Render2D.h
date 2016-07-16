@@ -17,6 +17,10 @@ public:
   void addToForeground(Drawable2D*);
   void updateForeground(Drawable2D*);
   void removeForeground(Drawable2D*);
+  void removeForeground(int itemId);
+  void addToMiddleground(Drawable2D*);
+  void updateMiddleground(Drawable2D*);
+  void removeMiddleground(Drawable2D*);
   void addToBackground(Drawable2D*);
   void updateBackground(Drawable2D*);
   void removeBackground(Drawable2D*);

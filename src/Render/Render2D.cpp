@@ -37,12 +37,10 @@ void Render2D::addToForeground(Drawable2D *item)
 
 void Render2D::updateForeground(Drawable2D *item)
 {
-  //forward_list<Drawable2D>::iterator findIter = std::find(foreground.begin(), foreground.end(), item);
   forward_list<Drawable2D*>::iterator findIter = std::find_if(foreground.begin(), foreground.end(), [item](Drawable2D *n){return n->id == item->id;});
 
   if(findIter != foreground.end())
   {
-    //foreground.emplace_after(findIter, item);
     foreground.remove(*findIter);
     foreground.push_front(item);
   }
@@ -50,10 +48,34 @@ void Render2D::updateForeground(Drawable2D *item)
 
 void Render2D::removeForeground(Drawable2D *item)
 {
-  //foreground.remove(item);
   foreground.remove_if([item](Drawable2D *n){return n->id == item->id;});
 }
 
+void Render2D::removeForeground(int itemId)
+{
+  foreground.remove_if([itemId](Drawable2D *n){return n->id == itemId;});
+}
+
+void Render2D::addToMiddleground(Drawable2D *item)
+{
+  middleground.push_front(item);
+}
+
+void Render2D::updateMiddleground(Drawable2D *item)
+{
+  forward_list<Drawable2D*>::iterator findIter = std::find_if(middleground.begin(), middleground.end(), [item](Drawable2D *n){return n->id == item->id;});
+
+  if(findIter != middleground.end())
+  {
+    middleground.remove(*findIter);
+    middleground.push_front(item);
+  }
+}
+
+void Render2D::removeMiddleground(Drawable2D *item)
+{
+  middleground.remove_if([item](Drawable2D *n){return n->id == item->id;});
+}
 void Render2D::addToBackground(Drawable2D *item)
 {
   background.push_front(item);
@@ -61,12 +83,10 @@ void Render2D::addToBackground(Drawable2D *item)
 
 void Render2D::updateBackground(Drawable2D *item)
 {
-  //forward_list<Drawable2D>::iterator findIter = std::find(foreground.begin(), foreground.end(), item);
   forward_list<Drawable2D*>::iterator findIter = std::find_if(background.begin(), background.end(), [item](Drawable2D *n){return n->id == item->id;});
 
   if(findIter != background.end())
   {
-    //background.emplace_after(findIter, item);
     background.remove(*findIter);
     background.push_front(item);
   }
@@ -74,7 +94,6 @@ void Render2D::updateBackground(Drawable2D *item)
 
 void Render2D::removeBackground(Drawable2D *item)
 {
-  //background.remove(item);
   background.remove_if([item](Drawable2D *n){return n->id == item->id;});
 }
 void Render2D::setScreenBuffer(void* ptr)
@@ -85,6 +104,11 @@ void Render2D::setScreenBuffer(void* ptr)
 void Render2D::run()
 {
   for(auto item : background)
+  {
+    item->Render(screenBuffer, windowWidth, windowHeight);
+  }
+
+  for(auto item : middleground)
   {
     item->Render(screenBuffer, windowWidth, windowHeight);
   }
