@@ -10,14 +10,14 @@ HitBox2D::HitBox2D()
   check2 = false;
 }
 
-HitBox2D::HitBox2D(Shape2D b1)
+HitBox2D::HitBox2D(Shape2D *b1)
 {
   check1 = true;
   box1 = b1;
   check2 = false;
 }
 
-HitBox2D::HitBox2D(Shape2D b1, Shape2D b2)
+HitBox2D::HitBox2D(Shape2D *b1, Shape2D *b2)
 {
   check1 = true;
   box1 = b1;
@@ -35,8 +35,8 @@ bool HitBox2D::checkCollision(HitBox2D& other)
   {
     try
     {
-      thisHitBox = dynamic_cast<Box*>(&this->box1);
-      otherHitBox = dynamic_cast<Box*>(&other.box1);
+      thisHitBox = (Box*)this->box1;
+      otherHitBox = (Box*)other.box1;
     }
     catch(std::bad_cast& e)
     {

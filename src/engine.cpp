@@ -4,7 +4,7 @@
 #include <xinput.h>
 
 __declspec(dllexport) Engine::Engine(Game* nGame, HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine,
-                                     int showCode, char* name, bool consoleMode)
+                                     int showCode, char* name, bool consoleMode, int windowWidth, int windowHeight)
 {
   char msgBuf[256] = {0};
   msCurrent = 0;
@@ -13,7 +13,7 @@ __declspec(dllexport) Engine::Engine(Game* nGame, HINSTANCE instance, HINSTANCE 
 
   if(!consoleMode)
   {
-    if(!this->createWindow(instance, name))
+    if(!this->createWindow(instance, name, windowWidth, windowHeight))
     {
       OutputDebugStringA("Failed to create window");
     }
@@ -31,13 +31,13 @@ __declspec(dllexport) Engine::Engine(Game* nGame, HINSTANCE instance, HINSTANCE 
   OutputDebugStringA(msgBuf);
 }
 
-bool Engine::createWindow(HINSTANCE instance, char* name)
+bool Engine::createWindow(HINSTANCE instance, char* name, int windowWidth, int windowHeight)
 {
   bool success = false;
   WNDCLASSA windowClass = {0};
   HDC deviceContext;
 
-  RECT desiredWindowSize = {0, 0, 375, 550};
+  RECT desiredWindowSize = {0, 0, windowWidth, windowHeight};
   AdjustWindowRect(&desiredWindowSize, WS_OVERLAPPEDWINDOW|WS_VISIBLE, false);
 
   int desiredWidth = desiredWindowSize.right - desiredWindowSize.left;
@@ -65,6 +65,10 @@ bool Engine::createWindow(HINSTANCE instance, char* name)
         success = true;
         ReleaseDC(window, deviceContext);
       }
+    }
+    else
+    {
+      DWORD error = GetLastError();
     }
   }
 

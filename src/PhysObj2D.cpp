@@ -56,8 +56,8 @@ void PhysObj2D::handleCollision(PhysObj2D* other) throw (std::logic_error)
 
   try
   {
-    thisHitBox = dynamic_cast<Box*>(&this->hitBox.box1);
-    otherHitBox = dynamic_cast<Box*>(&other->hitBox.box1);
+    thisHitBox = (Box*)this->hitBox.box1;
+    otherHitBox = (Box*)other->hitBox.box1;
   }
   catch(std::bad_cast& e)
   {

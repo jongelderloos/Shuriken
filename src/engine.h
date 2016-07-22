@@ -14,7 +14,7 @@ class __declspec(dllexport) Engine
 {
 
 public:
-  Engine(Game* nGame, HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showCode, char* name, bool consoleMode);
+  Engine(Game* nGame, HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showCode, char* name, bool consoleMode, int windowWidth, int windowHeight);
   void regularWndProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
   static LRESULT CALLBACK MainWindowCallback(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
   bool run(ENG_MODE mode);
@@ -25,7 +25,7 @@ public:
   Game* game;
   
 private:
-  bool createWindow(HINSTANCE Instance, char* name);
+  bool createWindow(HINSTANCE Instance, char* name, int windowWidth, int windowHeight);
   static void resizeDIBSection(int width, int height, Engine* engPtr);
   static void updateWindow(HDC deviceContext, RECT windowREct, int x, int y, int width, int height, Engine* engPtr);
 

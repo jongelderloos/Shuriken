@@ -11,7 +11,7 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int cmdSh
 
   Tetris tetrisGame;
 
-  Engine myEngine(&tetrisGame, instance, prevInstance, cmdLine, cmdShow, "Tetris", false);
+  Engine myEngine(&tetrisGame, instance, prevInstance, cmdLine, cmdShow, "Tetris", false, 375, 550);
   myEngine.init();
 
   myEngine.run(ENG_NORMAL);

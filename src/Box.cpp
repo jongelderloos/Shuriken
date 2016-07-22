@@ -1,4 +1,5 @@
 #include "Box.h"
+#include <cmath>
 
 Box::Box()
 {
@@ -37,7 +38,8 @@ Box Box:: operator=(const Box& other)
 
 bool Box::checkCollision(const Box& other)
 {
-  if(((p2.x > other.p1.x) || (p1.x < other.p2.x)) && ((p2.y > other.p1.y) || (p1.y < other.p2.y)))
+  if(((abs(pos.x - other.pos.x) * 2) <  ((p2.x - p1.x) + (other.p2.x - other.p1.x))) &&
+     ((abs(pos.y - other.pos.y) * 2) <  ((p2.y - p1.y) + (other.p2.y - other.p1.y))))
   {
     return true;
   }

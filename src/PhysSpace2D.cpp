@@ -72,10 +72,10 @@ void PhysSpace2D::tick()
   {
     if(obj->canMove)
     {
-      obj->nextPos.x = obj->pos.x + (obj->vel.x / TICKS_PER_SECOND);
-      obj->nextPos.y = obj->pos.y + (obj->vel.y / TICKS_PER_SECOND);
-      cout << "Object: " << obj->name << " next pos: (" << obj->pos.x << "," << obj->pos.y << ")";
-      cout << "Velocity: (" << obj->vel.x << "," << obj->vel.y << ")";
+      //obj->nextPos.x = obj->pos.x + (obj->vel.x / TICKS_PER_SECOND);
+      //obj->nextPos.y = obj->pos.y + (obj->vel.y / TICKS_PER_SECOND);
+      //cout << "Object: " << obj->name << " next pos: (" << obj->pos.x << "," << obj->pos.y << ")";
+      //cout << "Velocity: (" << obj->vel.x << "," << obj->vel.y << ")";
     }
 
     if(obj->feelsGravity)
@@ -95,15 +95,18 @@ void PhysSpace2D::tick()
       for( unsigned int i = 0; i < objects.size(); i++ )
       {
         //if(compObj->canCollide)
-        if(objects[i]->canCollide)
+        if(obj != objects[i])
         {
-          //hasCollided = obj->hitBox.checkCollision(compObj->hitBox);
-          hasCollided = obj->hitBox.checkCollision(objects[i]->hitBox);
-
-          if(hasCollided)
+          if(objects[i]->canCollide)
           {
-            //obj->handleCollision(compObj);
-            obj->handleCollision(objects[i]);
+            //hasCollided = obj->hitBox.checkCollision(compObj->hitBox);
+            hasCollided = obj->hitBox.checkCollision(objects[i]->hitBox);
+
+            if(hasCollided)
+            {
+              //obj->handleCollision(compObj);
+              obj->handleCollision(objects[i]);
+            }
           }
         }
       }

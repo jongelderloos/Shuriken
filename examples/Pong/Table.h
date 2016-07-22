@@ -5,6 +5,7 @@
 #include "ball.h"
 #include "paddle.h"
 #include "PhysSpace2D.h"
+#include "Render2D.h"
 
 typedef enum
 {
@@ -25,6 +26,7 @@ public:
   int getDesiredFPS(void) override;
   unsigned int* getMsProcessTime(void) override;
   void draw(void) override;
+  void setVideoMemory(void* memoryPtr, int width, int height);
 
 private:
   void moveP1Paddle(float);
@@ -38,6 +40,10 @@ private:
   float tableHeight;
   float tableWidth;
   TABLE_STATE tableState;
+  void* videoMemPtr;
+  int windowWidth;
+  int windowHeight;
+  Render2D render;
 };
 
 #endif // TABLE_H_
