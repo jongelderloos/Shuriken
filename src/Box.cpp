@@ -40,7 +40,7 @@ Box Box:: operator=(const Box& other)
 //TODO: so this loops forever and stack overflows when both objects are a box
 bool Box::checkCollision(Shape2D* other)
 {
-  return  other->checkCollision((Shape2D*)this);
+  return  other->checkCollision(this);
 }
 
 bool Box::checkCollision(Box* other)
