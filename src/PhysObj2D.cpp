@@ -38,6 +38,9 @@ void PhysObj2D::init(std::string n, Point2D p, Vec2D v, HitBox2D hB, bool move, 
   mass = m;
 }
 
+// TODO: this needs a major overhaul. I think the nextPos needs to go away and be
+// replaced by last pos?
+//
 // This always uses box1 (a rectangle) to handle the collision
 void PhysObj2D::handleCollision(PhysObj2D* other) throw (std::logic_error)
 {

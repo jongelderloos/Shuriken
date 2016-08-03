@@ -94,17 +94,15 @@ void PhysSpace2D::tick()
       //for(auto compObj : objects)
       for( unsigned int i = 0; i < objects.size(); i++ )
       {
-        //if(compObj->canCollide)
         if(obj != objects[i])
         {
           if(objects[i]->canCollide)
           {
-            //hasCollided = obj->hitBox.checkCollision(compObj->hitBox);
             hasCollided = obj->hitBox.checkCollision(objects[i]->hitBox);
 
             if(hasCollided)
             {
-              //obj->handleCollision(compObj);
+              // TODO: this does not work right now
               obj->handleCollision(objects[i]);
             }
           }

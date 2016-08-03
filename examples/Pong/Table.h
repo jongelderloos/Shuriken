@@ -30,6 +30,7 @@ public:
 
 private:
   void moveP1Paddle(float);
+  void moveP2Paddle(float);
   PhysSpace2D gameTable;
   Ball gameBall;
   Paddle p1Paddle;

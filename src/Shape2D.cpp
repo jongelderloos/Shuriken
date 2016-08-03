@@ -18,3 +18,18 @@ Shape2D Shape2D::operator=(const Shape2D& other)
     
     return *this;
 }
+
+bool Shape2D::checkCollision(Shape2D* other)
+{
+  return false;
+}
+
+bool Shape2D::checkCollision(Box* other)
+{
+  return false;
+}
+
+bool Shape2D::checkCollision(Circle* other)
+{
+  return false;
+}

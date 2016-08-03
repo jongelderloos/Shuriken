@@ -19,10 +19,9 @@ Table::Table()
 
   Point2D ballPos(40, 200);
   Vec2D ballVel(0, 0);
-  Circle ballShape(40, 200, 10);
-  HitBox2D ballHb(&ballShape);
-  // Create a setup function
-  gameBall.init("Game Ball", ballPos, ballVel, ballHb, 10, true, true, false, 0);
+  Circle *ballShape = new Circle(40, 200, 5);
+  HitBox2D ballHb(ballShape);
+  gameBall.init("Game Ball", ballPos, ballVel, ballHb, 5, true, true, false, 0);
 
   OutputDebugStringA(("Ball: " + gameBall.name).c_str());
 
@@ -38,7 +37,7 @@ Table::Table()
   HitBox2D hb2(shape2);
   p2Paddle.init("Player 2 Paddle", pos2, vel2, hb2, paddleHeight, paddleWidth, true, true, false, 0);
 
-  //gameTable.addObject(&gameBall);
+  gameTable.addObject(&gameBall);
   gameTable.addObject(&p1Paddle);
   gameTable.addObject(&p2Paddle);
 
@@ -99,6 +98,18 @@ void Table::handleInput(char key)
         moveP1Paddle(20);
       }
       break;
+    case 0x26:
+      if(tableState == TABLE_PLAYING)
+      {
+        moveP2Paddle(20);
+      }
+      break;
+    case 0x28:
+      if(tableState == TABLE_PLAYING)
+      {
+        moveP2Paddle(-20);
+      }
+      break;
     default:
       break;
   }
@@ -135,12 +146,7 @@ void Table::draw(void)
 
 void Table::moveP1Paddle(float yDist)
 {
-  //cout << "Moving paddle 1: " << yDist;
-  //OutputDebugStringA(("Moving paddke 1: " + yDist).c_str());
   p1Paddle.pos.y += yDist;
-
-  //cout << "New Paddle height: " << p1Paddle.pos.x;
-  //OutputDebugStringA(("New paddle height: " + p1Paddle.pox.x).c_str());
 
   if(p1Paddle.pos.y > (tableHeight - (p1Paddle.height / 2)))
   {
@@ -152,15 +158,50 @@ void Table::moveP1Paddle(float yDist)
     p1Paddle.pos.y = (p1Paddle.height / 2);
   }
   
-  //OutputDebugStringA(("New paddle height: " + p1Paddle.pos.x).c_str());
-  //cout << "New Paddle height: " << p1Paddle.pos.x;
+  // Update the hit box too
+  if(p1Paddle.hitBox.box1 != NULL)
+  {
+    p1Paddle.hitBox.box1->pos.y = p1Paddle.pos.y;
+  }
+
+  if(p1Paddle.hitBox.box2 != NULL)
+  {
+    p1Paddle.hitBox.box2->pos.y = p1Paddle.pos.y;
+  }
+  
   PaddleDrawable *paddle = new PaddleDrawable(p1Paddle.pos.x, p1Paddle.pos.y, p1Paddle.width, p1Paddle.height);
   paddle->id = 1;
   paddle->color = 0xFFFFFF;
   render.updateMiddleground(paddle);
+}
+
+void Table::moveP2Paddle(float yDist)
+{
+  p2Paddle.pos.y += yDist;
+
+  if(p2Paddle.pos.y > (tableHeight - (p2Paddle.height / 2)))
+  {
+    p2Paddle.pos.y = (tableHeight - (p2Paddle.height / 2));
+  }
+
+  if(p2Paddle.pos.y < (p2Paddle.height / 2))
+  {
+    p2Paddle.pos.y = (p2Paddle.height / 2);
+  }
+  
+  // Update the hit box too
+  if(p2Paddle.hitBox.box1 != NULL)
+  {
+    p2Paddle.hitBox.box1->pos.y = p2Paddle.pos.y;
+  }
+
+  if(p2Paddle.hitBox.box2 != NULL)
+  {
+    p2Paddle.hitBox.box2->pos.y = p2Paddle.pos.y;
+  }
 
   PaddleDrawable *paddle2 = new PaddleDrawable(p2Paddle.pos.x, p2Paddle.pos.y, p2Paddle.width, p2Paddle.height);
   paddle2->id = 2;
   paddle2->color = 0xFFFFFF;
-  render.addToMiddleground(paddle2);
+  render.updateMiddleground(paddle2);
 }
