@@ -72,8 +72,14 @@ void PhysSpace2D::tick()
   {
     if(obj->canMove)
     {
-      //obj->nextPos.x = obj->pos.x + (obj->vel.x / TICKS_PER_SECOND);
-      //obj->nextPos.y = obj->pos.y + (obj->vel.y / TICKS_PER_SECOND);
+      obj->pos.x = obj->pos.x + (obj->vel.x / TICKS_PER_SECOND);
+      obj->pos.y = obj->pos.y + (obj->vel.y / TICKS_PER_SECOND);
+
+      if(obj->hitBox.box1 != NULL)
+      {
+        obj->hitBox.box1->pos.x = obj->pos.x;
+        obj->hitBox.box1->pos.y = obj->pos.y;
+      }
       //cout << "Object: " << obj->name << " next pos: (" << obj->pos.x << "," << obj->pos.y << ")";
       //cout << "Velocity: (" << obj->vel.x << "," << obj->vel.y << ")";
     }

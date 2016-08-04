@@ -17,7 +17,6 @@ public:
   bool checkCollision(Circle* other) override;
   bool checkCollision(Box* other) override;
   float radius;
-  Point2D center;
 };
 
 #endif //_CIRCLE_H_

@@ -37,7 +37,6 @@ Box Box:: operator=(const Box& other)
   return *this;
 }
 
-//TODO: so this loops forever and stack overflows when both objects are a box
 bool Box::checkCollision(Shape2D* other)
 {
   return  other->checkCollision(this);
@@ -61,29 +60,29 @@ bool Box::checkCollision(Circle* other)
     return true;
   }
   // Center of the circle is inside the X edges of the box
-  else if(other->pos.x <= p2.x && other->pos.x >= p1.x)
+  else if(other->pos.x <= pos.x + p2.x && other->pos.x >= pos.x + p1.x)
   {
     // Center of the circle is no more than its radius away from the edge of the box in the y coordinate
-    if((other->pos.y + other->radius >= p1.y && other->pos.y < p1.y) || (other->pos.y - other->radius <= p2.y && other->pos.y > p2.y))
+    if((other->pos.y + other->radius >= pos.y + p1.y && other->pos.y < pos.y + p1.y) || (other->pos.y - other->radius <= pos.y + p2.y && other->pos.y > pos.y + p2.y))
     {
       return true;
     }
   }
   // Center of the circle is inside the Y edges of the box
-  else if(other->pos.y <= p2.y && other->pos.y >= p1.y)
+  else if(other->pos.y <= pos.y + p2.y && other->pos.y >= pos.y + p1.y)
   {
     // Center of the circle is no more than its radius away from the edge of the box in the x coordinate
-    if((other->pos.x + other->radius >= p1.x && other->pos.x < p1.x) || (other->pos.x - other->radius <= p2.x && other->pos.x > p2.x))
+    if((other->pos.x + other->radius >= pos.x + p1.x && other->pos.x < pos.x + p1.x) || (other->pos.x - other->radius <= pos.x + p2.x && other->pos.x > pos.x + p2.x))
     {
       return true;
     }
   }
   // Center of the circle is to the upper left of the box
-  else if(other->pos.y > p2.y && other->pos.x < p1.x)
+  else if(other->pos.y > pos.y + p2.y && other->pos.x < pos.x + p1.x)
   {
     // Caclulate the distance between the center of the circle and corner of the box
-    float xDist = abs(other->pos.x - p1.x);
-    float yDist = abs(other->pos.y - p2.y);
+    float xDist = abs(other->pos.x - pos.x + p1.x);
+    float yDist = abs(other->pos.y - pos.y + p2.y);
 
     float dist = sqrt(pow(xDist, 2) + pow(yDist, 2));
 
@@ -94,11 +93,11 @@ bool Box::checkCollision(Circle* other)
     }
   }
   // Center of the circle is to the upper right of the box
-  else if(other->pos.y > p2.y && other->pos.x > p2.x)
+  else if(other->pos.y > pos.y + p2.y && other->pos.x > pos.x + p2.x)
   {
     // Caclulate the distance between the center of the circle and corner of the box
-    float xDist = abs(other->pos.x - p2.x);
-    float yDist = abs(other->pos.y - p2.y);
+    float xDist = abs(other->pos.x - pos.x + p2.x);
+    float yDist = abs(other->pos.y - pos.y + p2.y);
 
     float dist = sqrt(pow(xDist, 2) + pow(yDist, 2));
 
@@ -109,11 +108,11 @@ bool Box::checkCollision(Circle* other)
     }
   }
   // Center of the circle is to the lower left of the box
-  else if(other->pos.y < p1.y && other->pos.x < p1.x)
+  else if(other->pos.y < pos.y + p1.y && other->pos.x < pos.x + p1.x)
   {
     // Caclulate the distance between the center of the circle and corner of the box
-    float xDist = abs(other->pos.x - p1.x);
-    float yDist = abs(other->pos.y - p1.y);
+    float xDist = abs(other->pos.x - pos.x + p1.x);
+    float yDist = abs(other->pos.y - pos.y + p1.y);
 
     float dist = sqrt(pow(xDist, 2) + pow(yDist, 2));
 
@@ -124,11 +123,11 @@ bool Box::checkCollision(Circle* other)
     }
   }
   // Center of the circle is to the lower right of the box
-  else if(other->pos.y < p1.y && other->pos.x > p2.x)
+  else if(other->pos.y < pos.y + p1.y && other->pos.x > pos.x + p2.x)
   {
     // Caclulate the distance between the center of the circle and corner of the box
-    float xDist = abs(other->pos.x - p2.x);
-    float yDist = abs(other->pos.y - p1.y);
+    float xDist = abs(other->pos.x - pos.x + p2.x);
+    float yDist = abs(other->pos.y - pos.y + p1.y);
 
     float dist = sqrt(pow(xDist, 2) + pow(yDist, 2));
 

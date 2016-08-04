@@ -5,6 +5,7 @@
 #include "Circle.h"
 #include <string>
 #include "PaddleDrawable.h"
+#include "CircleDrawable.h"
 
 Table::Table()
 {
@@ -17,9 +18,9 @@ Table::Table()
 
   gameTable.init(tableHeight, tableWidth);
 
-  Point2D ballPos(40, 200);
-  Vec2D ballVel(0, 0);
-  Circle *ballShape = new Circle(40, 200, 5);
+  Point2D ballPos(21, 200);
+  Vec2D ballVel(1500, 0);
+  Circle *ballShape = new Circle(21, 200, 5);
   HitBox2D ballHb(ballShape);
   gameBall.init("Game Ball", ballPos, ballVel, ballHb, 5, true, true, false, 0);
 
@@ -60,6 +61,11 @@ Table::Table()
   paddle2->id = 2;
   paddle2->color = 0xFFFFFF;
   render.addToMiddleground(paddle2);
+
+  CircleDrawable *circle = new CircleDrawable(gameBall.pos.x, gameBall.pos.y, gameBall.radius);
+  circle->id =3;
+  circle->color = 0xFFFFFF;
+  render.addToMiddleground(circle);
 }
 
 Table::~Table()
@@ -120,6 +126,11 @@ void Table::update(void)
   if(tableState == TABLE_PLAYING)
   {
     gameTable.tick();
+
+    CircleDrawable *circle = new CircleDrawable(gameBall.pos.x, gameBall.pos.y, gameBall.radius);
+    circle->id =3;
+    circle->color = 0xFFFFFF;
+    render.updateMiddleground(circle);
   }
   //cout << gameBall.name << ": pos(" << gameBall.pos.x << "," << gameBall.pos.y << ")";
   //cout << p1Paddle.name << ": pos(" << p1Paddle.pos.x << "," << p1Paddle.pos.y << ")";
