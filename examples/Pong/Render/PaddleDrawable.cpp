@@ -20,18 +20,33 @@ void PaddleDrawable::Render(void* videoMemPtr, int windowWidth, int windowHeight
   //uint32_t value = 0xFFFFFF;
 
   uint8_t* row = (uint8_t*)videoMemPtr;
-  row += ((yCoord-(height/2))*windowWidth*4);
+  int yStart = yCoord - (height/2);
+
+  if(yStart < 0)
+  {
+    height = height + yStart;
+    yStart = 0;
+  }
+
+  row += yStart*windowWidth*4;
   for(int y = 0; y < height; y++)
   {
-    uint32_t* pixel = (uint32_t*)row;
-    pixel += (xCoord-(width/2));
-    for(int x = 0; x < width; x++)
+    if((yStart + y < windowHeight) && (yStart + y >= 0))
     {
-      if(pixel >= (uint32_t*)videoMemPtr && pixel <= (uint32_t*)videoMemPtr + ((windowWidth * windowHeight) * 4))
+      uint32_t* pixel = (uint32_t*)row;
+      pixel += (xCoord-(width/2));
+      for(int x = 0; x < width; x++)
       {
-        *pixel++ = color;
+        if(pixel >= (uint32_t*)videoMemPtr && pixel <= (uint32_t*)videoMemPtr + ((windowWidth * windowHeight) * 4))
+        {
+          *pixel++ = color;
+        }
       }
+      row += windowWidth * 4;
     }
-    row += windowWidth * 4;
+    else if(yStart + y >= windowHeight)
+    {
+      break;
+    }
   }
 }

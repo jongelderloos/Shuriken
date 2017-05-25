@@ -109,7 +109,7 @@ void PhysSpace2D::tick()
             if(hasCollided)
             {
               // TODO: this does not work right now
-              obj->handleCollision(objects[i]);
+              obj->handleCollision(objects[i], (float)TICKS_PER_SECOND);
             }
           }
         }

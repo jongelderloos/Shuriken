@@ -6,6 +6,7 @@
 #include "paddle.h"
 #include "PhysSpace2D.h"
 #include "Render2D.h"
+#include "Box2D.h"
 
 typedef enum
 {
@@ -31,20 +32,27 @@ public:
 private:
   void moveP1Paddle(float);
   void moveP2Paddle(float);
-  PhysSpace2D gameTable;
-  Ball gameBall;
-  Paddle p1Paddle;
-  Paddle p2Paddle;
   int p1Score;
   int p2Score;
-  unsigned int msProcessTime;
-  float tableHeight;
-  float tableWidth;
   TABLE_STATE tableState;
   void* videoMemPtr;
   int windowWidth;
   int windowHeight;
   Render2D render;
+  b2Body* bottomBody;
+  b2Body* topBody;
+  b2Body* p1PaddleBody;
+  b2Body* p2PaddleBody;
+  b2Body* ballBody;
+  b2World* worldPtr;
+  unsigned int msProcessTime;
+  float tableHeight;
+  float tableWidth;
+  float paddleWidth;
+  float paddleHeight;
+  float ballRadius;
+  float wallWidth;
+  float pixelsPerUnit;
 };
 
 #endif // TABLE_H_

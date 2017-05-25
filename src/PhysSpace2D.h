@@ -6,7 +6,7 @@
 
 using std::vector;
 
-#define TICKS_PER_SECOND 120
+#define TICKS_PER_SECOND 60
 
 class __declspec(dllexport) PhysSpace2D
 {

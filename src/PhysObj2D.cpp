@@ -42,12 +42,10 @@ void PhysObj2D::init(std::string n, Point2D p, Vec2D v, HitBox2D hB, bool move, 
 // replaced by last pos?
 //
 // This always uses box1 (a rectangle) to handle the collision
-void PhysObj2D::handleCollision(PhysObj2D* other) throw (std::logic_error)
+void PhysObj2D::handleCollision(PhysObj2D* other, float ticksPerSecond) throw (std::logic_error)
 {
   Point2D pen; 
-  float percentPen;
-  float xDir = nextPos.x - pos.x;
-  float yDir = nextPos.y - pos.y;
+  Point2D percentPen;
   Point2D hit; 
   Point2D newPos;
   float slope;
@@ -56,6 +54,17 @@ void PhysObj2D::handleCollision(PhysObj2D* other) throw (std::logic_error)
   CollisionData2D colData;
   Box* thisHitBox = NULL;
   Box* otherHitBox = NULL;
+  Point2D lastPos;
+  Point2D tickVel;
+
+  tickVel.x = vel.x / ticksPerSecond;
+  tickVel.y = vel.y / ticksPerSecond;
+
+  lastPos.x = pos.x - (tickVel.x);
+  lastPos.y = pos.y - (tickVel.y);
+
+  nextPos.x = pos.x + (tickVel.x);
+  nextPos.y = pos.y + (tickVel.y);
 
   try
   {
@@ -72,70 +81,91 @@ void PhysObj2D::handleCollision(PhysObj2D* other) throw (std::logic_error)
     return;
   }
 
-  if(xDir > 0)
+  // TODO: here we dont look at the vel of the other object, we need to atleast do it
+  // in the y component incase the paddle moved
+  if(vel.x > 0)
   {
-    pen.x = (nextPos.x + thisHitBox->p2.x) - otherHitBox->p1.x;
+    pen.x = (pos.x + thisHitBox->p2.x) - (other->pos.x + otherHitBox->p1.x);
+  }
+  else if(vel.x < 0)
+  {
+    pen.x = (pos.x + thisHitBox->p1.x) - (other->pos.x + otherHitBox->p2.x);
   }
   else
   {
-    pen.x = (nextPos.x + thisHitBox->p1.x) - otherHitBox->p2.x;
+    pen.x = 0;
   }
 
-  if(yDir > 0)
+  if(vel.y > 0)
   {
-    pen.y = (nextPos.y + thisHitBox->p2.y) - otherHitBox->p1.y;
+    pen.y = (pos.y + thisHitBox->p2.y) - (other->pos.y + otherHitBox->p1.y);
+  }
+  else if(vel.y < 0)
+  {
+    pen.y = (pos.y + thisHitBox->p1.y) - (other->pos.y + otherHitBox->p2.y);
   }
   else
   {
-    pen.y = (nextPos.y + thisHitBox->p1.y) - otherHitBox->p2.y;
+    pen.y = 0;
   }
 
-  percentPen = pen.x / (nextPos.x - pos.x);
+  //percentPen.x = tickVel.x == 0 ? 0 : pen.x / tickVel.x; 
+  //percentPen.y = tickVel.y == 0 ? 0 : pen.y / tickVel.y; 
 
-  newPos.x = nextPos.x - pen.x;
-  newPos.y = nextPos.y - ((nextPos.y - pos.y) * percentPen);
+  pos.x = pos.x - pen.x;
+  pos.y = pos.y - pen.y;
+  //newPos.y = nextPos.y - ((nextPos.y - pos.y) * percentPen);
+  
+  Point2D remaining;
+  remaining.x = tickVel.x - pen.x;
+  remaining.y = tickVel.y - pen.y;
 
-  colData.pos = newPos;
+  pos.x = pos.x - remaining.x;
+  pos.y = pos.y - remaining.y;
 
-  getPointSlope(&slope, &yIntercept);
+  vel.x = vel.x * -1;
+
+  //colData.pos = newPos;
+
+  //getPointSlope(&slope, &yIntercept);
 
   // The hit occured on the y axis
-  if(newPos.y == ((slope * newPos.x) + yIntercept))
-  {
-    impulse.x = pen.x * -1;
-    impulse.y = pen.y;
-    colData.impulse = impulse;
-    
-    colData.velocity.x = vel.x * -1;
-    colData.velocity.y = vel.y;
-  }
-  else
-  {
-    percentPen = pen.y / (nextPos.y - pos.y);
+  //if(newPos.y == ((slope * newPos.x) + yIntercept))
+  //{
+  //  impulse.x = pen.x * -1;
+  //  impulse.y = pen.y;
+  //  colData.impulse = impulse;
+  //  
+  //  colData.velocity.x = vel.x * -1;
+  //  colData.velocity.y = vel.y;
+  //}
+  //else
+  //{
+  //  percentPen.y = pen.y / (nextPos.y - pos.y);
 
-    newPos.x = nextPos.x - ((nextPos.x - pos.x) * percentPen);
-    newPos.y = nextPos.y - pen.y;
+  //  newPos.x = nextPos.x - ((nextPos.x - pos.x) * percentPen.x);
+  //  newPos.y = nextPos.y - pen.y;
 
-    colData.pos = newPos;
+  //  colData.pos = newPos;
 
-    getPointSlope(&slope, &yIntercept);
+  //  getPointSlope(&slope, &yIntercept);
 
-    // The hit occured on the x axis
-    if((newPos.y == ((slope * newPos.x) + yIntercept)) || (slope == INFINITY))
-    {
-      impulse.x = pen.x;
-      impulse.y = pen.y * -1;
-      colData.impulse = impulse;
+  //  // The hit occured on the x axis
+  //  if((newPos.y == ((slope * newPos.x) + yIntercept)) || (slope == INFINITY))
+  //  {
+  //    impulse.x = pen.x;
+  //    impulse.y = pen.y * -1;
+  //    colData.impulse = impulse;
 
-      colData.velocity.x = vel.x;
-      colData.velocity.y = vel.y * -1;
-    }
-    else
-    {
-      std::logic_error e("A collision was detected but could not be resolved");
-      throw e; 
-    }
-  }
+  //    colData.velocity.x = vel.x;
+  //    colData.velocity.y = vel.y * -1;
+  //  }
+  //  else
+  //  {
+  //    std::logic_error e("A collision was detected but could not be resolved");
+  //    throw e; 
+  //  }
+  //}
 }
 
 void PhysObj2D::resolveCollisions()

@@ -17,7 +17,7 @@ public:
   PhysObj2D();
   PhysObj2D(std::string n, Point2D p, Vec2D v, HitBox2D hB, bool move = false, bool collide = false, bool grav = false, float m = 0);
   virtual void init(std::string n, Point2D p, Vec2D v, HitBox2D hB, bool move = false, bool collide = false, bool grav = false, float m = 0);
-  virtual void handleCollision(PhysObj2D* other) throw (std::logic_error);
+  virtual void handleCollision(PhysObj2D* other, float ticksPerSecond) throw (std::logic_error);
   virtual void resolveCollisions();
   std::string name;
   Point2D pos;
