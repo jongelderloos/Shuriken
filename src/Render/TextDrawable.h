@@ -321,7 +321,7 @@ class __declspec(dllexport) TextDrawable : public Drawable2D
 public:
   TextDrawable();
   TextDrawable(char*, double, double, bool);
-  void Render(void*, int, int) override;
+  void Render(void*, int, int, int) override;
   void SetColor(uint32_t);
   void SetSize(int);
 

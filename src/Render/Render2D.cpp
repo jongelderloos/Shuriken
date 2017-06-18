@@ -9,6 +9,7 @@ Render2D::Render2D()
   coordHeight = 0;
   windowWidth = 0;
   windowHeight = 0;
+  pixelsPerUnit = 1;
   screenBuffer = NULL;
 }
 
@@ -28,6 +29,11 @@ void Render2D::setWindowSize(int width, int height)
 {
   windowWidth = width;
   windowHeight = height;
+}
+
+void Render2D::setPixelsPerUnit(int pixels)
+{
+  pixelsPerUnit = pixels;
 }
 
 void Render2D::addToForeground(Drawable2D *item)
@@ -105,17 +111,17 @@ void Render2D::run()
 {
   for(auto item : background)
   {
-    item->Render(screenBuffer, windowWidth, windowHeight);
+    item->Render(screenBuffer, windowWidth, windowHeight, pixelsPerUnit);
   }
 
   for(auto item : middleground)
   {
-    item->Render(screenBuffer, windowWidth, windowHeight);
+    item->Render(screenBuffer, windowWidth, windowHeight, pixelsPerUnit);
   }
 
   for(auto item : foreground)
   {
-    item->Render(screenBuffer, windowWidth, windowHeight);
+    item->Render(screenBuffer, windowWidth, windowHeight, pixelsPerUnit);
   }
 }
 

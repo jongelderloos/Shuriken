@@ -9,7 +9,7 @@ class __declspec(dllexport) BlockDrawable : public Drawable2D
 public:
   BlockDrawable();
   BlockDrawable(BLOCK_TYPE, int, int);
-  void Render(void*, int, int) override;
+  void Render(void*, int, int, int) override;
   BLOCK_TYPE type;
   int xCoord;
   int yCoord;

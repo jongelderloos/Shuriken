@@ -8,11 +8,11 @@ class __declspec(dllexport) CircleDrawable : public Drawable2D
 {
 public:
   CircleDrawable();
-  CircleDrawable(int, int, int);
-  void Render(void*, int, int) override;
-  int xCoord;
-  int yCoord;
-  int radius;
+  CircleDrawable(float, float, float);
+  void Render(void*, int, int, int) override;
+  float xCoord;
+  float yCoord;
+  float radius;
   uint32_t color;
 
 private:

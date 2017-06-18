@@ -14,6 +14,7 @@ public:
   void setScreenCoords(int, int);
   void setScaleProperties(bool, bool);
   void setWindowSize(int, int);
+  void setPixelsPerUnit(int);
   void addToForeground(Drawable2D*);
   void updateForeground(Drawable2D*);
   void removeForeground(Drawable2D*);
@@ -34,6 +35,7 @@ private:
   int coordHeight;
   int windowWidth;
   int windowHeight;
+  int pixelsPerUnit;
   forward_list<Drawable2D*> background;
   forward_list<Drawable2D*> middleground;
   forward_list<Drawable2D*> foreground;

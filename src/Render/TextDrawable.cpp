@@ -17,7 +17,8 @@ TextDrawable::TextDrawable(char* text, double x, double y, bool fillBackground)
   size = 1;
 }
 
-void TextDrawable::Render(void* videoMemPtr, int windowWidth, int windowHeight)
+//TODO: use pixelsPerUnit to scale when the screen size changes?
+void TextDrawable::Render(void* videoMemPtr, int windowWidth, int windowHeight, int pixelsPerUnit)
 {
   int xPixel = (int)((xPercent / (double)100) * (double)windowWidth);
   int yPixel = (int)((yPercent / (double)100) * (double)windowHeight);

@@ -8,12 +8,12 @@ class __declspec(dllexport) PaddleDrawable : public Drawable2D
 {
 public:
   PaddleDrawable();
-  PaddleDrawable(int, int, int, int);
-  void Render(void*, int, int) override;
-  int xCoord;
-  int yCoord;
-  int width;
-  int height;
+  PaddleDrawable(float, float, float, float);
+  void Render(void*, int, int, int) override;
+  float xCoord;
+  float yCoord;
+  float width;
+  float height;
   uint32_t color;
 
 private:

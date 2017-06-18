@@ -11,9 +11,7 @@
 //TODO: Add starting velocity based on paddle position
 //TODO: Change ball velocity based on position of the paddle it hits
 //TODO: TextDrawable takes x and y as percent while others are coordinate values
-//TODO: Make render know about pixelsPerUnit so I dont have to pass it all the time
 //TODO: Move paddleDrawable to box drawable...
-//TODO: Draw dotted line down the middle
 //TODO: fix rendering so the ball does no show on the other side of screen after scoring
 
 Table::Table()
@@ -90,40 +88,53 @@ Table::Table()
 
   msProcessTime = (1.0f / 60.0f) * 1000.0f;
 
-  PaddleDrawable *background = new PaddleDrawable((tableWidth / 2) * pixelsPerUnit, (tableHeight / 2) * pixelsPerUnit, tableWidth * pixelsPerUnit, tableHeight * pixelsPerUnit);
+  PaddleDrawable *background = new PaddleDrawable((tableWidth / 2), (tableHeight / 2), tableWidth, tableHeight);
   background->id = 1000;
   background->color = 0x0;
   render.addToBackground(background);
 
   b2Vec2 p1PaddlePos = p1PaddleBody->GetPosition();
-  PaddleDrawable *paddle = new PaddleDrawable(p1PaddlePos.x * pixelsPerUnit, p1PaddlePos.y * pixelsPerUnit, paddleWidth * pixelsPerUnit, paddleHeight * pixelsPerUnit);
+  PaddleDrawable *paddle = new PaddleDrawable(p1PaddlePos.x, p1PaddlePos.y, paddleWidth, paddleHeight);
   paddle->id = 1;
   paddle->color = 0xFFFFFF;
   render.addToMiddleground(paddle);
 
   b2Vec2 p2PaddlePos = p2PaddleBody->GetPosition();
-  PaddleDrawable *paddle2 = new PaddleDrawable(p2PaddlePos.x * pixelsPerUnit, p2PaddlePos.y * pixelsPerUnit, paddleWidth * pixelsPerUnit, paddleHeight * pixelsPerUnit);
+  PaddleDrawable *paddle2 = new PaddleDrawable(p2PaddlePos.x, p2PaddlePos.y, paddleWidth, paddleHeight);
   paddle2->id = 2;
   paddle2->color = 0xFFFFFF;
   render.addToMiddleground(paddle2);
 
   b2Vec2 ballPos = ballBody->GetPosition();
-  CircleDrawable *circle = new CircleDrawable(ballPos.x * pixelsPerUnit, ballPos.y * pixelsPerUnit, ballRadius * pixelsPerUnit);
+  CircleDrawable *circle = new CircleDrawable(ballPos.x, ballPos.y, ballRadius);
   circle->id = 3;
   circle->color = 0xFFFFFF;
   render.addToMiddleground(circle);
 
   b2Vec2 topWallPos = topBody->GetPosition();
-  PaddleDrawable *top = new PaddleDrawable(topWallPos.x * pixelsPerUnit, topWallPos.y * pixelsPerUnit, tableWidth * pixelsPerUnit, wallWidth * pixelsPerUnit);
+  PaddleDrawable *top = new PaddleDrawable(topWallPos.x, topWallPos.y, tableWidth, wallWidth);
   top->id = 4;
   top->color = 0xFFFFFF;
   render.addToMiddleground(top);
 
   b2Vec2 botWallPos = bottomBody->GetPosition();
-  PaddleDrawable *bot = new PaddleDrawable(botWallPos.x * pixelsPerUnit, botWallPos.y * pixelsPerUnit, tableWidth * pixelsPerUnit, wallWidth * pixelsPerUnit);
+  PaddleDrawable *bot = new PaddleDrawable(botWallPos.x, botWallPos.y, tableWidth, wallWidth);
   bot->id = 5;
   bot->color = 0xFFFFFF;
   render.addToMiddleground(bot);
+
+  // Draw the dotted line
+
+  for(int i = 0; i < 40; i++)
+  {
+    if(i % 2 == 0)
+    {
+      PaddleDrawable *dot = new PaddleDrawable(30.0f, (i + 1), 0.3f, 1.0f);
+      dot->id = 6000 + i;
+      dot->color = 0xFFFFFF;
+      render.addToMiddleground(dot);
+    }
+  }
 
   char p1ScoreString[20];
   sprintf(p1ScoreString, "%d", p1Score);
@@ -173,6 +184,7 @@ void Table::setVideoMemory(void* memoryPtr, int width, int height)
 {
   render.setWindowSize(width, height);
   render.setScreenBuffer(memoryPtr);
+  render.setPixelsPerUnit(pixelsPerUnit);
 }
 
 void Table::start(void)
@@ -314,18 +326,18 @@ void Table::update(void)
   }
 
   b2Vec2 p1PaddlePos = p1PaddleBody->GetPosition();
-  PaddleDrawable *paddle = new PaddleDrawable(p1PaddlePos.x * pixelsPerUnit, p1PaddlePos.y * pixelsPerUnit, paddleWidth * pixelsPerUnit, paddleHeight * pixelsPerUnit);
+  PaddleDrawable *paddle = new PaddleDrawable(p1PaddlePos.x, p1PaddlePos.y, paddleWidth, paddleHeight);
   paddle->id = 1;
   paddle->color = 0xFFFFFF;
   render.updateMiddleground(paddle);
   
   b2Vec2 p2PaddlePos = p2PaddleBody->GetPosition();
-  PaddleDrawable *paddle2 = new PaddleDrawable(p2PaddlePos.x * pixelsPerUnit, p2PaddlePos.y * pixelsPerUnit, paddleWidth * pixelsPerUnit, paddleHeight * pixelsPerUnit);
+  PaddleDrawable *paddle2 = new PaddleDrawable(p2PaddlePos.x, p2PaddlePos.y, paddleWidth, paddleHeight);
   paddle2->id = 2;
   paddle2->color = 0xFFFFFF;
   render.updateMiddleground(paddle2);
   
-  CircleDrawable *circle = new CircleDrawable(ballPos.x * pixelsPerUnit, ballPos.y * pixelsPerUnit, ballRadius * pixelsPerUnit);
+  CircleDrawable *circle = new CircleDrawable(ballPos.x, ballPos.y, ballRadius);
   circle->id = 3;
   circle->color = 0xFFFFFF;
   render.updateMiddleground(circle);
@@ -364,7 +376,7 @@ void Table::moveP1Paddle(float yDist)
 
   p1PaddleBody->SetTransform(b2Vec2(bodyPos.x, yPos), 0.0f);
   
-  PaddleDrawable *paddle = new PaddleDrawable(bodyPos.x * pixelsPerUnit, yPos * pixelsPerUnit, paddleWidth * pixelsPerUnit, paddleHeight * pixelsPerUnit);
+  PaddleDrawable *paddle = new PaddleDrawable(bodyPos.x, yPos, paddleWidth, paddleHeight);
   paddle->id = 1;
   paddle->color = 0xFFFFFF;
   render.updateMiddleground(paddle);
@@ -387,7 +399,7 @@ void Table::moveP2Paddle(float yDist)
 
   p2PaddleBody->SetTransform(b2Vec2(bodyPos.x, yPos), 0.0f);
 
-  PaddleDrawable *paddle2 = new PaddleDrawable(bodyPos.x * pixelsPerUnit, yPos * pixelsPerUnit, paddleWidth * pixelsPerUnit, paddleHeight * pixelsPerUnit);
+  PaddleDrawable *paddle2 = new PaddleDrawable(bodyPos.x, yPos, paddleWidth, paddleHeight);
   paddle2->id = 2;
   paddle2->color = 0xFFFFFF;
   render.updateMiddleground(paddle2);
@@ -410,7 +422,7 @@ void Table::moveBall(float yDist)
 
   ballBody->SetTransform(b2Vec2(bodyPos.x, yPos), 0.0f);
   
-  CircleDrawable *ball = new CircleDrawable(bodyPos.x * pixelsPerUnit, yPos * pixelsPerUnit, ballRadius * pixelsPerUnit);
+  CircleDrawable *ball = new CircleDrawable(bodyPos.x, yPos, ballRadius);
   ball->id = 3;
   ball->color = 0xFFFFFF;
   render.updateMiddleground(ball);
