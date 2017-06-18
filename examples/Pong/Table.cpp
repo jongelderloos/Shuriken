@@ -8,10 +8,13 @@
 #include "CircleDrawable.h"
 #include "TextDrawable.h"
 
-//TODO: Add reset and Menu options
+//TODO: Add starting velocity based on paddle position
+//TODO: Change ball velocity based on position of the paddle it hits
 //TODO: TextDrawable takes x and y as percent while others are coordinate values
 //TODO: Make render know about pixelsPerUnit so I dont have to pass it all the time
 //TODO: Move paddleDrawable to box drawable...
+//TODO: Draw dotted line down the middle
+//TODO: fix rendering so the ball does no show on the other side of screen after scoring
 
 Table::Table()
 {
@@ -24,6 +27,9 @@ Table::Table()
   wallWidth = 1.0f;
 
   tableState = TABLE_START;
+  ballOnLeft = true;
+  ballVelDirection = 1;
+  bounceCount = 1;
 
   // Create the physics world
   b2Vec2 gravity(0.0f, 0.0f);
@@ -76,7 +82,8 @@ Table::Table()
   ballFixtureDef.friction = 0.3f;
   ballFixtureDef.restitution = 1.0f;
   ballBody->CreateFixture(&ballFixtureDef);
-  ballBody->SetLinearVelocity(b2Vec2(15.0f, 2.0f));
+
+  reset();
 
   p1Score = 0;
   p2Score = 0;
@@ -121,7 +128,7 @@ Table::Table()
   char p1ScoreString[20];
   sprintf(p1ScoreString, "%d", p1Score);
   TextDrawable *p1ScoreText = new TextDrawable(p1ScoreString, 30.0f, 90.0f, false);
-  p1ScoreText->id = 2000;
+  p1ScoreText->id = 2001;
   p1ScoreText->SetColor(0xFFFFFF);
   p1ScoreText->SetSize(3);
   render.addToForeground(p1ScoreText);
@@ -129,7 +136,7 @@ Table::Table()
   char p2ScoreString[20];
   sprintf(p2ScoreString, "%d", p2Score);
   TextDrawable *p2ScoreText = new TextDrawable(p2ScoreString, 70.0f, 90.0f, false);
-  p2ScoreText->id = 2000;
+  p2ScoreText->id = 2002;
   p2ScoreText->SetColor(0xFFFFFF);
   p2ScoreText->SetSize(3);
   render.addToForeground(p2ScoreText);
@@ -137,6 +144,29 @@ Table::Table()
 
 Table::~Table()
 {
+}
+
+void Table::reset()
+{
+  p1PaddleBody->SetTransform(b2Vec2(1.0f, 20.0f), 0.0f);
+  p2PaddleBody->SetTransform(b2Vec2(59.0f, 20.0f), 0.0f);
+
+  float ballXVel;
+  float ballX;
+  float ballY = 20.0f;
+
+  if(ballOnLeft)
+  {
+    ballX = 3.0f;
+    ballXVel = 15.0f;
+  }
+  else
+  {
+    ballX = 57.0f;
+    ballXVel = -15.0f;
+  }
+  ballBody->SetTransform(b2Vec2(ballX,ballY), 0.0f);
+  ballBody->SetLinearVelocity(b2Vec2(ballXVel, 2.0f));
 }
 
 void Table::setVideoMemory(void* memoryPtr, int width, int height)
@@ -155,32 +185,60 @@ void Table::handleInput(char key)
   switch(key)
   {
     case 0x20: // space
-      tableState = TABLE_PLAYING;
+      if(tableState == TABLE_START)
+      {
+        tableState = TABLE_PLAYING;
+      }
+      else if(tableState == TABLE_DONE)
+      {
+        reset();
+        tableState = TABLE_START;
+      }
       break;
     case 0x53:
     case 0x73: // s
-      if(tableState == TABLE_PLAYING)
+      if(tableState == TABLE_PLAYING || tableState == TABLE_START)
       {
         moveP1Paddle(-2);
+
+        if(tableState == TABLE_START)
+        {
+          moveBall(-2);
+        }
       }
       break;
     case 0x57:
     case 0x77: // w
-      if(tableState == TABLE_PLAYING)
+      if(tableState == TABLE_PLAYING || tableState == TABLE_START)
       {
         moveP1Paddle(2);
+
+        if(tableState == TABLE_START)
+        {
+          moveBall(2);
+        }
       }
       break;
     case 0x26:
-      if(tableState == TABLE_PLAYING)
+      if(tableState == TABLE_PLAYING || tableState == TABLE_START)
       {
         moveP2Paddle(2);
+
+        if(tableState == TABLE_START)
+        {
+          moveBall(2);
+        }
       }
       break;
     case 0x28:
-      if(tableState == TABLE_PLAYING)
+      if(tableState == TABLE_PLAYING || tableState == TABLE_START)
       {
         moveP2Paddle(-2);
+
+        if(tableState == TABLE_START)
+        {
+          moveBall(-2);
+        }
       }
       break;
     default:
@@ -190,40 +248,50 @@ void Table::handleInput(char key)
 
 void Table::update(void)
 {
+  b2Vec2 ballPos = ballBody->GetPosition();
+
   if(tableState == TABLE_PLAYING)
   {
     float32 timeStep = 1.0f / 60.0f;
     worldPtr->Step(timeStep, 6, 2);
 
-    b2Vec2 p1PaddlePos = p1PaddleBody->GetPosition();
-    PaddleDrawable *paddle = new PaddleDrawable(p1PaddlePos.x * pixelsPerUnit, p1PaddlePos.y * pixelsPerUnit, paddleWidth * pixelsPerUnit, paddleHeight * pixelsPerUnit);
-    paddle->id = 1;
-    paddle->color = 0xFFFFFF;
-    render.updateMiddleground(paddle);
-    
-    b2Vec2 p2PaddlePos = p2PaddleBody->GetPosition();
-    PaddleDrawable *paddle2 = new PaddleDrawable(p2PaddlePos.x * pixelsPerUnit, p2PaddlePos.y * pixelsPerUnit, paddleWidth * pixelsPerUnit, paddleHeight * pixelsPerUnit);
-    paddle2->id = 2;
-    paddle2->color = 0xFFFFFF;
-    render.updateMiddleground(paddle2);
-    
-    b2Vec2 ballPos = ballBody->GetPosition();
-    CircleDrawable *circle = new CircleDrawable(ballPos.x * pixelsPerUnit, ballPos.y * pixelsPerUnit, ballRadius * pixelsPerUnit);
-    circle->id =3;
-    circle->color = 0xFFFFFF;
-    render.updateMiddleground(circle);
+    bool bounceOccured = false;
 
-    float goalDistance = 0.5f;
+    if(ballVelDirection > 0 && ballBody->GetLinearVelocity().x < 0.0f)
+    {
+      ballVelDirection = -1;
+      bounceCount++;
+      bounceOccured = true;
+    }
+    else if(ballVelDirection < 0 && ballBody->GetLinearVelocity().x > 0.0f)
+    {
+      ballVelDirection = 1;
+      bounceCount++;
+      bounceOccured = true;
+    }
+
+    if(bounceCount % 3 == 0 && bounceOccured)
+    {
+      b2Vec2 vel = ballBody->GetLinearVelocity();
+
+      vel.x = vel.x * 1.3f;
+      vel.y = vel.y * 1.3f;
+      ballBody->SetLinearVelocity(vel);
+    }
+
+
+    float goalDistance = 0.75f;
 
     if(ballPos.x < goalDistance)
     {
       tableState = TABLE_DONE;
       p2Score += 1;
+      ballOnLeft = true;
       
       char p2ScoreString[20];
       sprintf(p2ScoreString, "%d", p2Score);
       TextDrawable *p2ScoreText = new TextDrawable(p2ScoreString, 70.0f, 90.0f, false);
-      p2ScoreText->id = 2000;
+      p2ScoreText->id = 2002;
       p2ScoreText->SetColor(0xFFFFFF);
       p2ScoreText->SetSize(3);
       render.updateForeground(p2ScoreText);
@@ -233,16 +301,35 @@ void Table::update(void)
     {
       tableState = TABLE_DONE;
       p1Score += 1;
+      ballOnLeft = false;
      
       char p1ScoreString[20];
       sprintf(p1ScoreString, "%d", p1Score);
       TextDrawable *p1ScoreText = new TextDrawable(p1ScoreString, 30.0f, 90.0f, false);
-      p1ScoreText->id = 2000;
+      p1ScoreText->id = 2001;
       p1ScoreText->SetColor(0xFFFFFF);
       p1ScoreText->SetSize(3);
       render.updateForeground(p1ScoreText);
     }
   }
+
+  b2Vec2 p1PaddlePos = p1PaddleBody->GetPosition();
+  PaddleDrawable *paddle = new PaddleDrawable(p1PaddlePos.x * pixelsPerUnit, p1PaddlePos.y * pixelsPerUnit, paddleWidth * pixelsPerUnit, paddleHeight * pixelsPerUnit);
+  paddle->id = 1;
+  paddle->color = 0xFFFFFF;
+  render.updateMiddleground(paddle);
+  
+  b2Vec2 p2PaddlePos = p2PaddleBody->GetPosition();
+  PaddleDrawable *paddle2 = new PaddleDrawable(p2PaddlePos.x * pixelsPerUnit, p2PaddlePos.y * pixelsPerUnit, paddleWidth * pixelsPerUnit, paddleHeight * pixelsPerUnit);
+  paddle2->id = 2;
+  paddle2->color = 0xFFFFFF;
+  render.updateMiddleground(paddle2);
+  
+  CircleDrawable *circle = new CircleDrawable(ballPos.x * pixelsPerUnit, ballPos.y * pixelsPerUnit, ballRadius * pixelsPerUnit);
+  circle->id = 3;
+  circle->color = 0xFFFFFF;
+  render.updateMiddleground(circle);
+    
 }
 
 int Table::getDesiredFPS(void)
@@ -305,3 +392,28 @@ void Table::moveP2Paddle(float yDist)
   paddle2->color = 0xFFFFFF;
   render.updateMiddleground(paddle2);
 }
+
+void Table::moveBall(float yDist)
+{
+  b2Vec2 bodyPos = ballBody->GetPosition();
+  float yPos = bodyPos.y + yDist;
+
+  if(yPos > (tableHeight - 2))
+  {
+    yPos = (tableHeight - 2);
+  }
+
+  if(yPos < 2)
+  {
+    yPos = 2;
+  }
+
+  ballBody->SetTransform(b2Vec2(bodyPos.x, yPos), 0.0f);
+  
+  CircleDrawable *ball = new CircleDrawable(bodyPos.x * pixelsPerUnit, yPos * pixelsPerUnit, ballRadius * pixelsPerUnit);
+  ball->id = 3;
+  ball->color = 0xFFFFFF;
+  render.updateMiddleground(ball);
+}
+
+

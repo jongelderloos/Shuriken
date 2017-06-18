@@ -28,10 +28,12 @@ public:
   unsigned int* getMsProcessTime(void) override;
   void draw(void) override;
   void setVideoMemory(void* memoryPtr, int width, int height);
+  void reset();
 
 private:
   void moveP1Paddle(float);
   void moveP2Paddle(float);
+  void moveBall(float);
   int p1Score;
   int p2Score;
   TABLE_STATE tableState;
@@ -53,6 +55,9 @@ private:
   float ballRadius;
   float wallWidth;
   float pixelsPerUnit;
+  bool ballOnLeft;
+  int ballVelDirection;
+  int bounceCount;
 };
 
 #endif // TABLE_H_
