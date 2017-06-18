@@ -1,14 +1,14 @@
-#ifndef _PADDLEDRAWABLE_H_
-#define _PADDLEDRAWABLE_H_
+#ifndef _SQUAREDRAWABLE_H_
+#define _SQUAREDRAWABLE_H_
 
 #include "Drawable2D.h"
 #include <stdint.h>
 
-class __declspec(dllexport) PaddleDrawable : public Drawable2D
+class __declspec(dllexport) SquareDrawable : public Drawable2D
 {
 public:
-  PaddleDrawable();
-  PaddleDrawable(float, float, float, float);
+  SquareDrawable();
+  SquareDrawable(float, float, float, float);
   void Render(void*, int, int, int) override;
   float xCoord;
   float yCoord;

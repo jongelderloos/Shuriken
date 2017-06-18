@@ -1,13 +1,13 @@
-#include "PaddleDrawable.h"
+#include "SquareDrawable.h"
 #include <stdint.h>
 
-PaddleDrawable::PaddleDrawable()
+SquareDrawable::SquareDrawable()
 {
   xCoord = 0;
   yCoord = 0;
 }
 
-PaddleDrawable::PaddleDrawable(float x, float y, float width, float height)
+SquareDrawable::SquareDrawable(float x, float y, float width, float height)
 {
   xCoord = x;
   yCoord = y;
@@ -15,7 +15,7 @@ PaddleDrawable::PaddleDrawable(float x, float y, float width, float height)
   this->height = height;
 }
 
-void PaddleDrawable::Render(void* videoMemPtr, int windowWidth, int windowHeight, int pixelsPerUnit)
+void SquareDrawable::Render(void* videoMemPtr, int windowWidth, int windowHeight, int pixelsPerUnit)
 {
   int xPixels = xCoord * pixelsPerUnit;
   int yPixels = yCoord * pixelsPerUnit;
