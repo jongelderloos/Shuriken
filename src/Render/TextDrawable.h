@@ -326,8 +326,8 @@ public:
   void SetSize(int);
 
 private:
-  double xPercent;
-  double yPercent;
+  double xCoord;
+  double yCoord;
   char text[100];
   bool fillBackground;
   uint32_t color;

@@ -10,7 +10,6 @@
 
 //TODO: Add starting velocity based on paddle position
 //TODO: Change ball velocity based on position of the paddle it hits
-//TODO: TextDrawable takes x and y as percent while others are coordinate values
 //TODO: Move paddleDrawable to box drawable...
 //TODO: fix rendering so the ball does no show on the other side of screen after scoring
 
@@ -138,7 +137,7 @@ Table::Table()
 
   char p1ScoreString[20];
   sprintf(p1ScoreString, "%d", p1Score);
-  TextDrawable *p1ScoreText = new TextDrawable(p1ScoreString, 30.0f, 90.0f, false);
+  TextDrawable *p1ScoreText = new TextDrawable(p1ScoreString, 18.0f, 36.0f, false);
   p1ScoreText->id = 2001;
   p1ScoreText->SetColor(0xFFFFFF);
   p1ScoreText->SetSize(3);
@@ -146,7 +145,7 @@ Table::Table()
 
   char p2ScoreString[20];
   sprintf(p2ScoreString, "%d", p2Score);
-  TextDrawable *p2ScoreText = new TextDrawable(p2ScoreString, 70.0f, 90.0f, false);
+  TextDrawable *p2ScoreText = new TextDrawable(p2ScoreString, 42.0f, 36.0f, false);
   p2ScoreText->id = 2002;
   p2ScoreText->SetColor(0xFFFFFF);
   p2ScoreText->SetSize(3);
@@ -291,23 +290,7 @@ void Table::update(void)
       ballBody->SetLinearVelocity(vel);
     }
 
-
     float goalDistance = 0.75f;
-
-    if(ballPos.x < goalDistance)
-    {
-      tableState = TABLE_DONE;
-      p2Score += 1;
-      ballOnLeft = true;
-      
-      char p2ScoreString[20];
-      sprintf(p2ScoreString, "%d", p2Score);
-      TextDrawable *p2ScoreText = new TextDrawable(p2ScoreString, 70.0f, 90.0f, false);
-      p2ScoreText->id = 2002;
-      p2ScoreText->SetColor(0xFFFFFF);
-      p2ScoreText->SetSize(3);
-      render.updateForeground(p2ScoreText);
-    }
 
     if(ballPos.x > tableWidth - goalDistance)
     {
@@ -317,11 +300,26 @@ void Table::update(void)
      
       char p1ScoreString[20];
       sprintf(p1ScoreString, "%d", p1Score);
-      TextDrawable *p1ScoreText = new TextDrawable(p1ScoreString, 30.0f, 90.0f, false);
+      TextDrawable *p1ScoreText = new TextDrawable(p1ScoreString, 18.0f, 36.0f, false);
       p1ScoreText->id = 2001;
       p1ScoreText->SetColor(0xFFFFFF);
       p1ScoreText->SetSize(3);
       render.updateForeground(p1ScoreText);
+    }
+    
+    if(ballPos.x < goalDistance)
+    {
+      tableState = TABLE_DONE;
+      p2Score += 1;
+      ballOnLeft = true;
+      
+      char p2ScoreString[20];
+      sprintf(p2ScoreString, "%d", p2Score);
+      TextDrawable *p2ScoreText = new TextDrawable(p2ScoreString, 42.0f, 36.0f, false);
+      p2ScoreText->id = 2002;
+      p2ScoreText->SetColor(0xFFFFFF);
+      p2ScoreText->SetSize(3);
+      render.updateForeground(p2ScoreText);
     }
   }
 

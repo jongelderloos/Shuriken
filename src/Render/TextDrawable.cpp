@@ -3,15 +3,15 @@
 
 TextDrawable::TextDrawable()
 {
-  xPercent = 0;
-  yPercent = 0;
+  xCoord = 0;
+  yCoord = 0;
 }
 
 TextDrawable::TextDrawable(char* text, double x, double y, bool fillBackground)
 {
   memcpy(this->text, text, 100);
-  xPercent = x;
-  yPercent = y;
+  xCoord = x;
+  yCoord = y;
   this->fillBackground = fillBackground;
   color = 0xFFFFFF;
   size = 1;
@@ -20,8 +20,8 @@ TextDrawable::TextDrawable(char* text, double x, double y, bool fillBackground)
 //TODO: use pixelsPerUnit to scale when the screen size changes?
 void TextDrawable::Render(void* videoMemPtr, int windowWidth, int windowHeight, int pixelsPerUnit)
 {
-  int xPixel = (int)((xPercent / (double)100) * (double)windowWidth);
-  int yPixel = (int)((yPercent / (double)100) * (double)windowHeight);
+  int xPixel = (int)(xCoord * (double)pixelsPerUnit);
+  int yPixel = (int)(yCoord * (double)pixelsPerUnit);
 
   char* currentChar = text;
   uint8_t charMatrix[7][6];
